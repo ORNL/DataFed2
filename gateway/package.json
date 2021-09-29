@@ -1,0 +1,13 @@
+{
+    "email": "stansberrydv@ornl.gov",
+    "dependencies": {
+        "client-oauth2": "^4.3.3",
+        "fastify": "^3.21.6",
+        "fastify-cookie": "^5.3.1",
+        "fastify-cors": "^6.0.2",
+        "fastify-plugin": "^3.0.0",
+        "jsonwebtoken": "^8.5.1",
+        "openapi-validator-middleware": "^3.2.3",
+        "uri-js": "^4.4.1"
+    }
+}
