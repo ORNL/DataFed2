@@ -4,8 +4,10 @@ info:
   description: DataFed system API for production and custom clients
   version: 2.0.0
 servers:
-  - url: https://datafed.ornl.gov/v2
-    description: DataFed API Gateway Server
+#  - url: https://datafed.ornl.gov/v2
+#    description: DataFed Production API Gateway Server
+  - url: http://localhost/v2
+    description: Local Development API Gateway Server
 components:
   parameters:
     limit:
@@ -15,7 +17,6 @@ components:
         required: false
         schema:
           type: integer
-          format: int32
           minimum: 1
           maximum: 100
     offset:
@@ -25,7 +26,6 @@ components:
         required: false
         schema:
           type: integer
-          format: int32
           minimum: 0
   schemas:
     token_grant:
@@ -40,37 +40,19 @@ components:
           description: Access token
         expiration:
           type: integer
-          format: int32
           minimum: 0
           description: Access token expiration time in seconds
         refresh_token:
           type: string
           description: Refresh token
     user:
-      type: object
-      description: A user record
-      required:
-        - uid
-        - name_first
-        - name_last
-      properties:
-        uid:
-          type: string
-          description: User ID
-        name_first:
-          type: string
-          description: First name
-        name_last:
-          type: string
-          description: Last name
-        email:
-          type: string
-          format: email
-          description: Email address
+      $ref: "./schema/user.yaml"
 paths:
   /version:
     get:
       description: Get full DataFed system version.
+      tags:
+        - general
       responses:
         '200':
           description: System version as a JSON document
@@ -81,23 +63,29 @@ paths:
                 properties:
                   major:
                     type: integer
-                    format: int32
                     minimum: 0
                     description: Major version number
                   minor:
                     type: integer
-                    format: int32
                     minimum: 0
                     description: Minor version number
                   build:
                     type: integer
-                    format: int32
                     minimum: 0
                     description: Build number
   /auth/basic:
     post:
       summary: Authenticate user by UID and password.
       description: Authenticate user by UID and password and receive API access and refresh tokens on success.
+      tags:
+        - authentication
+      parameters:
+        - name: session_cookie
+          in: query
+          description: Flag to set API session cookie
+          required: false
+          schema:
+            type: boolean
       requestBody:
         content:
           application/json:
@@ -127,6 +115,15 @@ paths:
     post:
       summary: Exchange Globus access token for DataFed access token.
       description: Exchange a Globus access token with DataFed scope for DataFed API access and refresh tokens.
+      tags:
+        - authentication
+      parameters:
+        - name: session_cookie
+          in: query
+          description: Flag to set API session cookie
+          required: false
+          schema:
+            type: boolean
       requestBody:
         content:
           application/json:
@@ -149,20 +146,13 @@ paths:
           description: Authorization failed.
 
   /api/user/who:
-    get:
-      summary: Returns UID of authenticated user.
-      description: Returns UID of authenticated user.
-      responses:
-        '200':
-          description: A JSON document containing user record
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/user'
+    $ref: "routes/user/who.yaml"
   /api/user/list:
     get:
       summary: Returns a list of users.
       description: List of user records.
+      tags:
+        - user
       parameters:
         - name: collab
           in: query
@@ -180,11 +170,13 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/user'
+                  $ref: "#/components/schemas/user"
   /api/user/view:
     get:
       summary: View user information.
       description: View user information.
+      tags:
+        - user
       parameters:
         - name: details
           in: query
@@ -197,4 +189,4 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/user'
+                $ref: "#/components/schemas/user"

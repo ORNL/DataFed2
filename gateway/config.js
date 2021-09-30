@@ -11,6 +11,13 @@ config.token_secret = process.env.DATAFED_GATEWAY_TOKEN_SECRET || "Xh6-7puYwW-08
 config.token_exp = process.env.DATAFED_GATEWAY_TOKEN_EXP || "72h";
 config.web_cert = process.env.DATAFED_GATEWAY_WEB_CERT || "gateway.crt";
 config.web_key = process.env.DATAFED_GATEWAY_WEB_KEY || "gateway.key";
+config.sess_cookie_opts = {
+    path: '/v2/api',
+    secure: true,
+    httpOnly: true,
+    sameSite: "lax",
+    maxAge: 3600
+}
 
 if ( typeof config.port === "string" ){
     config.port = parseInt( config.port );
