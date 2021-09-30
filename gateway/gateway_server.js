@@ -33,7 +33,7 @@ app.register( require('./routes/v2/user'), { prefix: '/v2/api/user' });
 // ============================================================================
 // Setup OpenAPI Schema Validator
 
-validator.init( "./openapi/system_api.yaml", {
+validator.init( "./openapi/v2/system_api.yaml", {
     framework: 'fastify'
 });
 
@@ -63,7 +63,7 @@ app.register( require('fastify-swagger'), {
         filter: true
     },
     specification: {
-        path: "./openapi/system_api.yaml",
+        path: "./openapi/v2/system_api.yaml",
     }
 });
 
