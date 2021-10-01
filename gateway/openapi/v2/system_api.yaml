@@ -9,44 +9,13 @@ servers:
   - url: http://localhost/v2
     description: Local Development API Gateway Server
 components:
-  parameters:
-    limit:
-        name: limit
-        in: query
-        description: Limits the number of returned results
-        required: false
-        schema:
-          type: integer
-          minimum: 1
-          maximum: 100
-    offset:
-        name: offset
-        in: query
-        description: Offset from which start returned results
-        required: false
-        schema:
-          type: integer
-          minimum: 0
   schemas:
     token_grant:
-      type: object
-      description: Access and refresh tokens
-      required:
-        - access_token
-        - expiration
-      properties:
-        access_token:
-          type: string
-          description: Access token
-        expiration:
-          type: integer
-          minimum: 0
-          description: Access token expiration time in seconds
-        refresh_token:
-          type: string
-          description: Refresh token
+      $ref: "components/schemas/token_grant.yaml"
     user:
-      $ref: "./schema/user.yaml"
+      $ref: "components/schemas/user.yaml"
+    project:
+      $ref: "components/schemas/project.yaml"
 paths:
   /version:
     get:
@@ -73,120 +42,27 @@ paths:
                     type: integer
                     minimum: 0
                     description: Build number
+
   /auth/basic:
-    post:
-      summary: Authenticate user by UID and password.
-      description: Authenticate user by UID and password and receive API access and refresh tokens on success.
-      tags:
-        - authentication
-      parameters:
-        - name: session_cookie
-          in: query
-          description: Flag to set API session cookie
-          required: false
-          schema:
-            type: boolean
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                uid:
-                  type: string
-                  description: DataFed user identifier
-                password:
-                  type: string
-                  description: DataFed User password
-              required:
-                - uid
-                - password
-      responses:
-        '200':
-          description: API access and refresh tokens
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/token_grant'
-        '401':
-          description: Authorization failed.
+    $ref: "paths/auth.yaml#/basic"
 
   /auth/token/exchange:
-    post:
-      summary: Exchange Globus access token for DataFed access token.
-      description: Exchange a Globus access token with DataFed scope for DataFed API access and refresh tokens.
-      tags:
-        - authentication
-      parameters:
-        - name: session_cookie
-          in: query
-          description: Flag to set API session cookie
-          required: false
-          schema:
-            type: boolean
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - access_token
-              properties:
-                access_token:
-                  type: string
-                  description: Globus access token
-      responses:
-        '200':
-          description: API access and refresh tokens
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/token_grant'
-        '401':
-          description: Authorization failed.
+    $ref: "paths/auth.yaml#/token_exchange"
 
   /api/user/who:
-    $ref: "routes/user/who.yaml"
+    $ref: "paths/user.yaml#/who"
   /api/user/list:
-    get:
-      summary: Returns a list of users.
-      description: List of user records.
-      tags:
-        - user
-      parameters:
-        - name: collab
-          in: query
-          description: Flag to return only collaborators
-          required: false
-          schema:
-            type: boolean
-        - $ref: '#/components/parameters/offset'
-        - $ref: '#/components/parameters/limit'
-      responses:
-        '200':
-          description: A JSON array of user documents
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/user"
+    $ref: "paths/user.yaml#/list"
   /api/user/view:
-    get:
-      summary: View user information.
-      description: View user information.
-      tags:
-        - user
-      parameters:
-        - name: details
-          in: query
-          description: Flag to return user details
-          schema:
-            type: boolean
-      responses:
-        '200':
-          description: A user document
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/user"
+    $ref: "paths/user.yaml#/view"
+
+  /api/project/list:
+    $ref: "paths/project.yaml#/list"
+  /api/project/view:
+    $ref: "paths/project.yaml#/view"
+  /api/project/create:
+    $ref: "paths/project.yaml#/create"
+  /api/project/update:
+    $ref: "paths/project.yaml#/update"
+  /api/project/delete:
+    $ref: "paths/project.yaml#/delete"

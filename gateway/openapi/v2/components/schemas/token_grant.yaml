@@ -1,0 +1,16 @@
+type: object
+description: Access and refresh tokens
+required:
+  - access_token
+  - expiration
+properties:
+  access_token:
+    type: string
+    description: Access token
+  expiration:
+    type: integer
+    minimum: 0
+    description: Access token expiration time in seconds
+  refresh_token:
+    type: string
+    description: Refresh token

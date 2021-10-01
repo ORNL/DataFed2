@@ -1,0 +1,71 @@
+basic:
+  post:
+    summary: Authenticate user by UID and password.
+    description: Authenticate user by UID and password and receive API access and refresh tokens on success.
+    tags:
+      - authentication
+    parameters:
+      - name: session_cookie
+        in: query
+        description: Flag to set API session cookie
+        required: false
+        schema:
+          type: boolean
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              uid:
+                type: string
+                description: DataFed user identifier
+              password:
+                type: string
+                description: DataFed User password
+            required:
+              - uid
+              - password
+    responses:
+      '200':
+        description: API access and refresh tokens
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/token_grant.yaml'
+      '401':
+        description: Authorization failed.
+
+token_exchange:
+  post:
+    summary: Exchange Globus access token for DataFed access token.
+    description: Exchange a Globus access token with DataFed scope for DataFed API access and refresh tokens.
+    tags:
+      - authentication
+    parameters:
+      - name: session_cookie
+        in: query
+        description: Flag to set API session cookie
+        required: false
+        schema:
+          type: boolean
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - access_token
+            properties:
+              access_token:
+                type: string
+                description: Globus access token
+    responses:
+      '200':
+        description: API access and refresh tokens
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/token_grant.yaml'
+      '401':
+        description: Authorization failed.

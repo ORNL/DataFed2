@@ -1,0 +1,7 @@
+name: offset
+in: query
+description: Offset from which start returned results
+required: false
+schema:
+  type: integer
+  minimum: 0

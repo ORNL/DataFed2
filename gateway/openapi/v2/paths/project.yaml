@@ -1,0 +1,76 @@
+list:
+  get:
+    summary: List projects.
+    description: List projects.
+    tags:
+      - project
+    parameters:
+      - $ref: '../components/parameters/offset.yaml'
+      - $ref: '../components/parameters/limit.yaml'
+    responses:
+      '200':
+        description: An array of project documents
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "../components/schemas/project.yaml"
+
+view:
+  get:
+    summary: View project information.
+    description: View project information.
+    tags:
+      - project
+    parameters:
+      - name: id
+        in: query
+        description: Project ID
+        schema:
+          type: string
+    responses:
+      '200':
+        description: A project document
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas/project.yaml"
+
+create:
+  post:
+    summary: Create a new project.
+    description: Create a new project.
+    tags:
+      - project
+    responses:
+      '200':
+        description: A project document
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas/project.yaml"
+
+update:
+  post:
+    summary: Update an existing project.
+    description: Update an existing project.
+    tags:
+      - project
+    responses:
+      '200':
+        description: The updated project document
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas/project.yaml"
+
+delete:
+  post:
+    summary: Delete an existing project.
+    description: Delete an existing project.
+    tags:
+      - project
+    responses:
+      '200':
+        description: No payload

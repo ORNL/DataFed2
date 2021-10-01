@@ -1,5 +1,5 @@
 type: object
-description: A user record
+description: A user document
 required:
   - uid
   - name_first

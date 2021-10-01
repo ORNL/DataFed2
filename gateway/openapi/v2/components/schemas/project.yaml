@@ -1,0 +1,33 @@
+type: object
+description: A project document
+required:
+  - id
+  - title
+properties:
+  id:
+    type: string
+    description: Project ID
+  title:
+    type: string
+    description: Title
+  description:
+    type: string
+    description: General project description, markdown allowed.
+  owner:
+    type: string
+    description: Project owner UID.
+  admins:
+    type: array
+    description: Array of project administrator UIDs.
+    items:
+      type: string
+  members:
+    type: array
+    description: Array of project member UIDs.
+    items:
+      type: string
+  allocations:
+    type: array
+    description: Array of repository IDs of project data allocations.
+    items:
+      type: string
