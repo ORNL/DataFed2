@@ -9,6 +9,11 @@ servers:
   - url: http://localhost/v2
     description: Local Development API Gateway Server
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     token_grant:
       $ref: "components/schemas/token_grant.yaml"
@@ -16,12 +21,18 @@ components:
       $ref: "components/schemas/user.yaml"
     project:
       $ref: "components/schemas/project.yaml"
+  responses:
+    UnauthorizedError:
+      description: Access token is missing or invalid
+security:
+  - bearerAuth: [] # Default auth is JWT bearer token
 paths:
   /version:
     get:
       description: Get full DataFed system version.
       tags:
         - general
+      security: [] # No auth required for this method
       responses:
         '200':
           description: System version as a JSON document
@@ -43,26 +54,174 @@ paths:
                     minimum: 0
                     description: Build number
 
-  /auth/basic:
-    $ref: "paths/auth.yaml#/basic"
+  # ========== Authentication Endpoints ==========
 
-  /auth/token/exchange:
+  # ---- Anonymous Endpoints ----
+
+  /authn/basic:
+    $ref: "paths/auth.yaml#/basic"
+  /authn/token/exchange:
     $ref: "paths/auth.yaml#/token_exchange"
+
+  # ---- Authenticated Endpoints ----
+
+  /api/authn/logout:
+    $ref: "paths/auth.yaml#/logout"
+  /api/authn/credentials/:
+    $ref: "paths/auth.yaml#/credentials"
+  /api/authn/credentials/revoke:
+    $ref: "paths/auth.yaml#/credentials_revoke"
+
+  # ========== User Endpoints ==========
 
   /api/user/who:
     $ref: "paths/user.yaml#/who"
-  /api/user/list:
-    $ref: "paths/user.yaml#/list"
+  /api/user/list/all:
+    $ref: "paths/user.yaml#/list_all"
+  /api/user/list/collab:
+    $ref: "paths/user.yaml#/list_collab"
+  /api/user/find:
+    $ref: "paths/user.yaml#/find"
   /api/user/view:
     $ref: "paths/user.yaml#/view"
 
+  # ========== Project Endpoints ==========
+
   /api/project/list:
     $ref: "paths/project.yaml#/list"
-  /api/project/view:
-    $ref: "paths/project.yaml#/view"
   /api/project/create:
     $ref: "paths/project.yaml#/create"
+  /api/project/view:
+    $ref: "paths/project.yaml#/view"
   /api/project/update:
     $ref: "paths/project.yaml#/update"
   /api/project/delete:
     $ref: "paths/project.yaml#/delete"
+  /api/project/members/update:
+    $ref: "paths/project.yaml#/members_update"
+  /api/project/admins/update:
+    $ref: "paths/project.yaml#/admins_update"
+
+  # ========== Group Endpoints ==========
+
+  /api/group/list:
+    $ref: "paths/group.yaml#/list"
+  /api/group/create:
+    $ref: "paths/group.yaml#/create"
+  /api/group/view:
+    $ref: "paths/group.yaml#/view"
+  /api/group/update:
+    $ref: "paths/group.yaml#/update"
+  /api/group/delete:
+    $ref: "paths/group.yaml#/delete"
+
+  # ========== Folder Endpoints ==========
+
+  /api/folder/create:
+    $ref: "paths/folder.yaml#/create"
+  /api/folder/view:
+    $ref: "paths/folder.yaml#/view"
+  /api/folder/update:
+    $ref: "paths/folder.yaml#/update"
+  /api/folder/delete:
+    $ref: "paths/folder.yaml#/delete"
+  /api/folder/items/list:
+    $ref: "paths/folder.yaml#/items_list"
+  /api/folder/items/link:
+    $ref: "paths/folder.yaml#/items_link"
+  /api/folder/items/unlink:
+    $ref: "paths/folder.yaml#/items_unlink"
+  /api/folder/items/move:
+    $ref: "paths/folder.yaml#/items_move"
+  /api/folder/items/lock:
+    $ref: "paths/folder.yaml#/items_lock"
+  /api/folder/items/unlock:
+    $ref: "paths/folder.yaml#/items_unlock"
+
+  # ========== Data Record Endpoints ==========
+
+  /api/record/create:
+    $ref: "paths/record.yaml#/create"
+  /api/record/view:
+    $ref: "paths/record.yaml#/view"
+  /api/record/update:
+    $ref: "paths/record.yaml#/update"
+  /api/record/update/allocation:
+    $ref: "paths/record.yaml#/update_allocation"
+  /api/record/update/owner:
+    $ref: "paths/record.yaml#/update_owner"
+  /api/record/delete:
+    $ref: "paths/record.yaml#/delete"
+  /api/record/lock:
+    $ref: "paths/record.yaml#/lock"
+  /api/record/unlock:
+    $ref: "paths/record.yaml#/unlock"
+  /api/record/import:
+    $ref: "paths/record.yaml#/import"
+  /api/record/export:
+    $ref: "paths/record.yaml#/export"
+  /api/record/provenance/graph:
+    $ref: "paths/record.yaml#/provenance/graph"
+  /api/record/metadata/validate:
+    $ref: "paths/record.yaml#/metadata_validate"
+  /api/record/data/download:
+    $ref: "paths/record.yaml#/data_download"
+  /api/record/data/upload:
+    $ref: "paths/record.yaml#/data_upload"
+  /api/record/data/delete:
+    $ref: "paths/record.yaml#/data_delete"
+
+  # ========== Access Control Endpoints ==========
+
+  # ========== Schema Endpoints ==========
+
+  /api/schema/list:
+    $ref: "paths/schema.yaml#/list"
+  /api/schema/find:
+    $ref: "paths/schema.yaml#/find"
+  /api/schema/create:
+    $ref: "paths/schema.yaml#/create"
+  /api/schema/view:
+    $ref: "paths/schema.yaml#/view"
+  /api/schema/update:
+    $ref: "paths/schema.yaml#/update"
+  /api/schema/revise:
+    $ref: "paths/schema.yaml#/revise"
+  /api/schema/delete:
+    $ref: "paths/schema.yaml#/delete"
+
+  # ========== Annotations Endpoints ==========
+
+  # ========== Repository Endpoints ==========
+
+  # ========== Allocation Endpoints ==========
+
+  # ========== Search Endpoints ==========
+
+  # ========== Globus Endpoints ==========
+
+  /api/globus/ep/recent/list:
+    $ref: "paths/globus.yaml#/ep_recent_list"
+  /api/globus/ep/favorite/list:
+    $ref: "paths/globus.yaml#/ep_favorite_list"
+  /api/globus/ep/favorite/add:
+    $ref: "paths/globus.yaml#/ep_favorite_add"
+  /api/globus/ep/favorite/remove:
+    $ref: "paths/globus.yaml#/ep_favorite_remove"
+  /api/globus/authz/verify:
+    $ref: "paths/globus.yaml#/authz_verify"
+
+  # ========== Catalog Endpoints ==========
+
+  # ========== Task Endpoints ==========
+
+  /api/task/list:
+    $ref: "paths/task.yaml#/list"
+  /api/task/view:
+    $ref: "paths/task.yaml#/view"
+  /api/task/cancel:
+    $ref: "paths/task.yaml#/cancel"
+
+
+  # ========== System Endpoints ==========
+

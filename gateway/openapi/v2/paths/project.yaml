@@ -36,7 +36,6 @@ view:
           application/json:
             schema:
               $ref: "../components/schemas/project.yaml"
-
 create:
   post:
     summary: Create a new project.

@@ -4,6 +4,7 @@ basic:
     description: Authenticate user by UID and password and receive API access and refresh tokens on success.
     tags:
       - authentication
+    security: [] # No auth required for this method
     parameters:
       - name: session_cookie
         in: query
@@ -42,6 +43,7 @@ token_exchange:
     description: Exchange a Globus access token with DataFed scope for DataFed API access and refresh tokens.
     tags:
       - authentication
+    security: [] # No auth required for this method
     parameters:
       - name: session_cookie
         in: query
