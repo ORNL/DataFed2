@@ -8,10 +8,18 @@ basic:
     parameters:
       - name: session_cookie
         in: query
-        description: Flag to set API session cookie
+        description: Flag to set access token as a session cookie. Cannot be used with no_expire flag.
         required: false
         schema:
           type: boolean
+          default: false
+      - name: no_expire
+        in: query
+        description: Flag to request non-expiring access token. No refresh token will be provided.
+        required: false
+        schema:
+          type: boolean
+          default: false
     requestBody:
       content:
         application/json:
@@ -34,8 +42,10 @@ basic:
           application/json:
             schema:
               $ref: '../components/schemas/token_grant.yaml'
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
-        description: Authorization failed.
+        description: Authorization failed - invalid UID or password.
 
 token_exchange:
   post:
@@ -69,5 +79,33 @@ token_exchange:
           application/json:
             schema:
               $ref: '../components/schemas/token_grant.yaml'
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
-        description: Authorization failed.
+        description: Authorization failed - invalid token.
+
+logout:
+  post:
+    summary: Logout.
+    description: Logout.
+    tags:
+      - authentication
+    responses:
+      '200':
+        $ref: '../components/responses/default.yaml#/ack'
+      '401':
+        $ref: '../components/responses/default.yaml#/noauth'
+
+token_revoke:
+  post:
+    summary: Revoke an access token.
+    description: Revoke an access token.
+    tags:
+      - authentication
+    responses:
+      '200':
+        $ref: '../components/responses/default.yaml#/ack'
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
+      '401':
+        $ref: '../components/responses/default.yaml#/noauth'

@@ -1,0 +1,82 @@
+list:
+  get:
+    summary: List groups.
+    description: List groups.
+    tags:
+      - group
+    parameters:
+      - $ref: '../components/parameters/offset.yaml'
+      - $ref: '../components/parameters/limit.yaml'
+    responses:
+      '200':
+        description: An array of group documents
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "../components/schemas/group.yaml"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+view:
+  get:
+    summary: View group information.
+    description: View group information.
+    tags:
+      - group
+    parameters:
+      - name: id
+        in: query
+        description: Group ID
+        schema:
+          type: string
+    responses:
+      '200':
+        description: A group document
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas/group.yaml"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+create:
+  post:
+    summary: Create a new group.
+    description: Create a new group.
+    tags:
+      - group
+    responses:
+      '200':
+        description: A group document
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas/group.yaml"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+update:
+  post:
+    summary: Update an existing group.
+    description: Update an existing group.
+    tags:
+      - group
+    responses:
+      '204':
+        $ref: "../components/responses/default.yaml#/ack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+delete:
+  post:
+    summary: Delete an existing group.
+    description: Delete an existing group.
+    tags:
+      - group
+    responses:
+      '204':
+        $ref: "../components/responses/default.yaml#/ack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"

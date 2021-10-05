@@ -16,6 +16,8 @@ list:
               type: array
               items:
                 $ref: "../components/schemas/project.yaml"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
 
 view:
   get:
@@ -36,6 +38,9 @@ view:
           application/json:
             schema:
               $ref: "../components/schemas/project.yaml"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
 create:
   post:
     summary: Create a new project.
@@ -49,6 +54,8 @@ create:
           application/json:
             schema:
               $ref: "../components/schemas/project.yaml"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
 
 update:
   post:
@@ -58,11 +65,33 @@ update:
       - project
     responses:
       '200':
-        description: The updated project document
-        content:
-          application/json:
-            schema:
-              $ref: "../components/schemas/project.yaml"
+        $ref: "../components/responses/default.yaml#/ack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+update_members:
+  post:
+    summary: Update members for an existing project.
+    description: Update members for an existing project.
+    tags:
+      - project
+    responses:
+      '200':
+        $ref: "../components/responses/default.yaml#/ack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+update_admins:
+  post:
+    summary: Update admins for an existing project.
+    description: Update admins for an existing project.
+    tags:
+      - project
+    responses:
+      '200':
+        $ref: "../components/responses/default.yaml#/ack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
 
 delete:
   post:
@@ -72,4 +101,6 @@ delete:
       - project
     responses:
       '200':
-        description: No payload
+        $ref: "../components/responses/default.yaml#/ack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"

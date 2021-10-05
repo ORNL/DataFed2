@@ -1,0 +1,24 @@
+type: object
+description: A group document
+required:
+  - id
+  - title
+properties:
+  id:
+    type: string
+    #title: Group ID
+    description: Group ID description
+  title:
+    type: string
+    description: Title
+  description:
+    type: string
+    description: General group description, markdown allowed.
+  owner:
+    type: string
+    description: Group owner UID.
+  members:
+    type: array
+    description: Array of group member UIDs.
+    items:
+      type: string

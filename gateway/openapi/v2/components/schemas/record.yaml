@@ -1,0 +1,19 @@
+type: object
+description: A data record document
+required:
+  - id
+  - title
+properties:
+  id:
+    type: string
+    #title: Group ID
+    description: Record ID
+  title:
+    type: string
+    description: Title
+  description:
+    type: string
+    description: General record description, markdown allowed.
+  owner:
+    type: string
+    description: Group owner UID.

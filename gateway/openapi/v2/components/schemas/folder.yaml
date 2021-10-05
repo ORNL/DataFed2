@@ -1,0 +1,18 @@
+type: object
+description: A folder document
+required:
+  - id
+  - title
+properties:
+  id:
+    type: string
+    description: Folder ID
+  title:
+    type: string
+    description: Title
+  description:
+    type: string
+    description: General description, markdown allowed.
+  owner:
+    type: string
+    description: Owner UID.

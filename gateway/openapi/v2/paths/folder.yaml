@@ -1,0 +1,158 @@
+create:
+  post:
+    summary: Create a new folder.
+    description: Create a new folder.
+    tags:
+      - folder
+    responses:
+      '200':
+        description: A folder document
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas/group.yaml"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+view:
+  get:
+    summary: View folder information.
+    description: View folder information.
+    tags:
+      - folder
+    parameters:
+      - name: id
+        in: query
+        description: Folder ID
+        schema:
+          type: string
+    responses:
+      '200':
+        description: A folder document
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas/folder.yaml"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+update:
+  post:
+    summary: Update an existing folder.
+    description: Update an existing folder.
+    tags:
+      - folder
+    responses:
+      '204':
+        $ref: "../components/responses/default.yaml#/ack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+delete:
+  post:
+    summary: Delete an existing folder.
+    description: Delete an existing folder.
+    tags:
+      - folder
+    responses:
+      '204':
+        $ref: "../components/responses/default.yaml#/ack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+items_list:
+  get:
+    summary: List items contained in folder.
+    description: List items contained in folder.
+    tags:
+      - folder
+    parameters:
+      - $ref: '../components/parameters/offset.yaml'
+      - $ref: '../components/parameters/limit.yaml'
+    responses:
+      '200':
+        description: An array of record and folder documents
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                anyOf:
+                  - $ref: "../components/schemas/record.yaml"
+                  - $ref: "../components/schemas/folder.yaml"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+items_link:
+  post:
+    summary: Link items into an existing folder.
+    description: Link items into an existing folder.
+    tags:
+      - folder
+    responses:
+      '204':
+        $ref: "../components/responses/default.yaml#/ack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+items_unlink:
+  post:
+    summary: Unlink items from an existing folder.
+    description: Unlink items from an existing folder.
+    tags:
+      - folder
+    responses:
+      '204':
+        $ref: "../components/responses/default.yaml#/ack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+items_move:
+  post:
+    summary: Move items from a source folder to a destination folder.
+    description: Move items from a source folder to a destination folder.
+    tags:
+      - folder
+    responses:
+      '204':
+        $ref: "../components/responses/default.yaml#/ack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+items_lock:
+  post:
+    summary: Lock all items in an existing folder.
+    description: Lock all items in an existing folder.
+    tags:
+      - folder
+    parameters:
+      - name: recurse
+        in: query
+        description: Unlock items in all nested folders
+        schema:
+          type: boolean
+          default: true
+    responses:
+      '204':
+        $ref: "../components/responses/default.yaml#/ack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+items_unlock:
+  post:
+    summary: Unlock all items in an existing folder.
+    description: Unlock all items in an existing folder.
+    tags:
+      - folder
+    parameters:
+      - name: recurse
+        in: query
+        description: Unlock items in all nested folders
+        schema:
+          type: boolean
+          default: true
+    responses:
+      '204':
+        $ref: "../components/responses/default.yaml#/ack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"

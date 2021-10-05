@@ -1,0 +1,21 @@
+ack:
+  description: Call completed, no results generated.
+
+nack:
+  description: Call failed, error information provided in payload.
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - summary
+        properties:
+          summary:
+            type: string
+            description: Brief error summary
+          description:
+            type: string
+            description: Error description
+
+noauth:
+  description: Call failed, not authorized.

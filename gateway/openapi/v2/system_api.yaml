@@ -21,6 +21,12 @@ components:
       $ref: "components/schemas/user.yaml"
     project:
       $ref: "components/schemas/project.yaml"
+    group:
+      $ref: "components/schemas/group.yaml"
+    record:
+      $ref: "components/schemas/record.yaml"
+    folder:
+      $ref: "components/schemas/folder.yaml"
   responses:
     UnauthorizedError:
       description: Access token is missing or invalid
@@ -59,18 +65,16 @@ paths:
   # ---- Anonymous Endpoints ----
 
   /authn/basic:
-    $ref: "paths/auth.yaml#/basic"
+    $ref: "paths/authn.yaml#/basic"
   /authn/token/exchange:
-    $ref: "paths/auth.yaml#/token_exchange"
+    $ref: "paths/authn.yaml#/token_exchange"
 
   # ---- Authenticated Endpoints ----
 
   /api/authn/logout:
-    $ref: "paths/auth.yaml#/logout"
-  /api/authn/credentials/:
-    $ref: "paths/auth.yaml#/credentials"
-  /api/authn/credentials/revoke:
-    $ref: "paths/auth.yaml#/credentials_revoke"
+    $ref: "paths/authn.yaml#/logout"
+  /api/authn/token_revoke:
+    $ref: "paths/authn.yaml#/token_revoke"
 
   # ========== User Endpoints ==========
 
@@ -95,12 +99,12 @@ paths:
     $ref: "paths/project.yaml#/view"
   /api/project/update:
     $ref: "paths/project.yaml#/update"
+  /api/project/update/members:
+    $ref: "paths/project.yaml#/update_members"
+  /api/project/update/admins:
+    $ref: "paths/project.yaml#/update_admins"
   /api/project/delete:
     $ref: "paths/project.yaml#/delete"
-  /api/project/members/update:
-    $ref: "paths/project.yaml#/members_update"
-  /api/project/admins/update:
-    $ref: "paths/project.yaml#/admins_update"
 
   # ========== Group Endpoints ==========
 
@@ -137,91 +141,3 @@ paths:
     $ref: "paths/folder.yaml#/items_lock"
   /api/folder/items/unlock:
     $ref: "paths/folder.yaml#/items_unlock"
-
-  # ========== Data Record Endpoints ==========
-
-  /api/record/create:
-    $ref: "paths/record.yaml#/create"
-  /api/record/view:
-    $ref: "paths/record.yaml#/view"
-  /api/record/update:
-    $ref: "paths/record.yaml#/update"
-  /api/record/update/allocation:
-    $ref: "paths/record.yaml#/update_allocation"
-  /api/record/update/owner:
-    $ref: "paths/record.yaml#/update_owner"
-  /api/record/delete:
-    $ref: "paths/record.yaml#/delete"
-  /api/record/lock:
-    $ref: "paths/record.yaml#/lock"
-  /api/record/unlock:
-    $ref: "paths/record.yaml#/unlock"
-  /api/record/import:
-    $ref: "paths/record.yaml#/import"
-  /api/record/export:
-    $ref: "paths/record.yaml#/export"
-  /api/record/provenance/graph:
-    $ref: "paths/record.yaml#/provenance/graph"
-  /api/record/metadata/validate:
-    $ref: "paths/record.yaml#/metadata_validate"
-  /api/record/data/download:
-    $ref: "paths/record.yaml#/data_download"
-  /api/record/data/upload:
-    $ref: "paths/record.yaml#/data_upload"
-  /api/record/data/delete:
-    $ref: "paths/record.yaml#/data_delete"
-
-  # ========== Access Control Endpoints ==========
-
-  # ========== Schema Endpoints ==========
-
-  /api/schema/list:
-    $ref: "paths/schema.yaml#/list"
-  /api/schema/find:
-    $ref: "paths/schema.yaml#/find"
-  /api/schema/create:
-    $ref: "paths/schema.yaml#/create"
-  /api/schema/view:
-    $ref: "paths/schema.yaml#/view"
-  /api/schema/update:
-    $ref: "paths/schema.yaml#/update"
-  /api/schema/revise:
-    $ref: "paths/schema.yaml#/revise"
-  /api/schema/delete:
-    $ref: "paths/schema.yaml#/delete"
-
-  # ========== Annotations Endpoints ==========
-
-  # ========== Repository Endpoints ==========
-
-  # ========== Allocation Endpoints ==========
-
-  # ========== Search Endpoints ==========
-
-  # ========== Globus Endpoints ==========
-
-  /api/globus/ep/recent/list:
-    $ref: "paths/globus.yaml#/ep_recent_list"
-  /api/globus/ep/favorite/list:
-    $ref: "paths/globus.yaml#/ep_favorite_list"
-  /api/globus/ep/favorite/add:
-    $ref: "paths/globus.yaml#/ep_favorite_add"
-  /api/globus/ep/favorite/remove:
-    $ref: "paths/globus.yaml#/ep_favorite_remove"
-  /api/globus/authz/verify:
-    $ref: "paths/globus.yaml#/authz_verify"
-
-  # ========== Catalog Endpoints ==========
-
-  # ========== Task Endpoints ==========
-
-  /api/task/list:
-    $ref: "paths/task.yaml#/list"
-  /api/task/view:
-    $ref: "paths/task.yaml#/view"
-  /api/task/cancel:
-    $ref: "paths/task.yaml#/cancel"
-
-
-  # ========== System Endpoints ==========
-
