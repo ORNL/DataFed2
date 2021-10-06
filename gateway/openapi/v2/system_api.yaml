@@ -4,8 +4,10 @@ info:
   description: DataFed system API for production and custom clients
   version: 2.0.0
 servers:
-#  - url: https://datafed.ornl.gov/v2
-#    description: DataFed Production API Gateway Server
+  #- url: https://datafed.ornl.gov/v2
+  #  description: DataFed production API Gateway Server
+  - url: https://sdms.ornl.gov/v2
+    description: DataFed development API Gateway Server
   - url: http://localhost/v2
     description: Local Development API Gateway Server
 components:
