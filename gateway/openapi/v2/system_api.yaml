@@ -6,7 +6,7 @@ info:
 servers:
   #- url: https://datafed.ornl.gov/v2
   #  description: DataFed production API Gateway Server
-  - url: https://sdms.ornl.gov/v2
+  - url: https://sdms.ornl.gov:50100/v2
     description: DataFed development API Gateway Server
   - url: http://localhost/v2
     description: Local Development API Gateway Server
