@@ -10,7 +10,7 @@ create:
         content:
           application/json:
             schema:
-              $ref: "../components/schemas/group.yaml"
+              $ref: "../components/schemas/folder.yaml"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"
 

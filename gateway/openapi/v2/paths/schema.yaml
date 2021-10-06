@@ -1,0 +1,122 @@
+list:
+  get:
+    summary: List schemas.
+    description: List schemas.
+    tags:
+      - schema
+    responses:
+      '200':
+        description: Array of schema documents
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "../components/schemas/schema.yaml"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+find:
+  post:
+    summary: Find schemas.
+    description: Find schemas by specified match criteria.
+    tags:
+      - schema
+    responses:
+      '200':
+        description: Array of schema documents
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "../components/schemas/schema.yaml"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+create:
+  post:
+    summary: Create a new schema.
+    description: Create a new schema.
+    tags:
+      - schema
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: "../components/schemas/schema.yaml"
+
+    responses:
+      '200':
+        description: A schema document
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas/schema.yaml"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+view:
+  get:
+    summary: View schema information.
+    description: View schema information.
+    tags:
+      - schema
+    parameters:
+      - name: id
+        in: query
+        description: Schema ID
+        schema:
+          type: string
+    responses:
+      '200':
+        description: A schema document
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas/schema.yaml"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+update:
+  post:
+    summary: Update an existing schema.
+    description: Update an existing schema. Schemas in use or referenced by other schemas cannot be updated.
+    tags:
+      - schema
+    responses:
+      '204':
+        $ref: "../components/responses/default.yaml#/ack"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+revise:
+  post:
+    summary: Revise an existing schema.
+    description: Revise an existing schema. Revision number is auto-incremented.
+    tags:
+      - schema
+    responses:
+      '200':
+        description: A schema document
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas/schema.yaml"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+delete:
+  post:
+    summary: Delete an existing schema.
+    description: Delete an existing schema.
+    tags:
+      - schema
+    responses:
+      '204':
+        $ref: "../components/responses/default.yaml#/ack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+

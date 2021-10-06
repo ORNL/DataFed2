@@ -1,0 +1,12 @@
+type: object
+description: General edge (relationship) definition
+properties:
+  type:
+    type: string
+    description: Edge type identifier
+  from:
+    type: string
+    description: Record ID of "parent"
+  to:
+    type: string
+    description: Record ID of "dependent"

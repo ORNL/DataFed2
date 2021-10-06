@@ -27,7 +27,9 @@ if ( config.tls ){
 const app = fastify( fastify_opts );
 
 app.register( require('./routes/v2/anon'), { prefix: '/v2' });
+app.register( require('./routes/v2/authn'), { prefix: '/v2/authn' });
 app.register( require('./routes/v2/user'), { prefix: '/v2/api/user' });
+app.register( require('./routes/v2/schema'), { prefix: '/v2/api/schema' });
 
 
 // ============================================================================
@@ -127,7 +129,8 @@ app.setErrorHandler( async ( err, a_req, a_resp ) => {
     console.log("ERROR",err);
 
     if ( err instanceof validator.InputValidationError ){
-        return a_resp.status(400).send( err );
+        //console.log("Details:",JSON.stringify(err.errors));
+        return a_resp.status(400).send({ message: "Input validation error", errors: err.errors });
     }
 
     a_resp.status(500);

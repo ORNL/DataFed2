@@ -1,0 +1,218 @@
+create:
+  post:
+    summary: Create a new data record.
+    description: Create a new data record.
+    tags:
+      - record
+    responses:
+      '200':
+        description: A data record document
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas/record.yaml"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+view:
+  get:
+    summary: View data record information.
+    description: View data record information.
+    tags:
+      - record
+    parameters:
+      - name: id
+        in: query
+        description: Record ID
+        schema:
+          type: string
+    responses:
+      '200':
+        description: A data record document
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas/record.yaml"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+update:
+  post:
+    summary: Update an existing data record.
+    description: Update an existing data record.
+    tags:
+      - record
+    responses:
+      '204':
+        $ref: "../components/responses/default.yaml#/ack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+update_allocation:
+  post:
+    summary: Update a data record's allocation.
+    description: Update a data record's allocation.
+    tags:
+      - record
+    responses:
+      '204':
+        $ref: "../components/responses/default.yaml#/ack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+update_owner:
+  post:
+    summary: Update a data record's owner.
+    description: Update a data record's owner.
+    tags:
+      - record
+    responses:
+      '204':
+        $ref: "../components/responses/default.yaml#/ack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+delete:
+  post:
+    summary: Delete an existing record.
+    description: Delete an existing record.
+    tags:
+      - record
+    responses:
+      '204':
+        $ref: "../components/responses/default.yaml#/ack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+lock:
+  post:
+    summary: Lock data record.
+    description: Lock data record.
+    tags:
+      - record
+    responses:
+      '204':
+        $ref: "../components/responses/default.yaml#/ack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+unlock:
+  post:
+    summary: Unlock data record.
+    description: Unlock data record.
+    tags:
+      - record
+    responses:
+      '204':
+        $ref: "../components/responses/default.yaml#/ack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+import:
+  post:
+    summary: Import a data record.
+    description: Import a data record from a JSON document.
+    tags:
+      - record
+    responses:
+      '200':
+        description: A data record document
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas/record.yaml"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+export:
+  get:
+    summary: Export a data record.
+    description: Export a data record to a JSON document.
+    tags:
+      - record
+    responses:
+      '200':
+        description: A full data record document in JSON format
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas/record.yaml"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+prov_graph:
+  get:
+    summary: Get the provenance graph for a data record.
+    description: Get the provenance graph for a data record.
+    tags:
+      - record
+    responses:
+      '200':
+        description: Provenance graph with data record vertices and dependency edges.
+          Vertices contain a "gen" attribute which indicates the vertices relative
+          "latitude" within the pedigree tree for layout purposes.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                vertices:
+                  type: array
+                  items:
+                    $ref: "../components/schemas/record.yaml"
+                edges:
+                  type: array
+                  items:
+                    $ref: "../components/schemas/edge.yaml"
+      '204':
+        description: Specified data record has no provenance information.
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+metadata_validate:
+  post:
+    summary: Validate metadata against a schema.
+    description: Validate metadata against a schema.
+    tags:
+      - record
+    responses:
+      '204':
+        $ref: "../components/responses/default.yaml#/ack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+data_download:
+  get:
+    summary: Download raw data from one or more data records.
+    description: Download raw data from one or more data records.
+    tags:
+      - record
+    responses:
+      '204':
+        $ref: "../components/responses/default.yaml#/ack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+data_upload:
+  get:
+    summary: Upload raw data from one or more data records.
+    description: Upload raw data from one or more data records.
+    tags:
+      - record
+    responses:
+      '204':
+        $ref: "../components/responses/default.yaml#/ack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+data_delete:
+  get:
+    summary: Delete raw data associated with one or more data records.
+    description: Delete raw data associated with one or more data records.
+    tags:
+      - record
+    responses:
+      '204':
+        $ref: "../components/responses/default.yaml#/ack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"

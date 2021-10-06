@@ -1,0 +1,22 @@
+type: object
+description: A schema document
+properties:
+  id:
+    type: string
+    description: Schema identifier
+  title:
+    type: string
+    description: Title
+  description:
+    type: string
+    description: Full description. Markdown supported.
+  revision:
+    type: integer
+    minimum: 0
+    description: Revision number
+  #definition:
+  #  type: object
+  #  properties: {}
+required:
+  - id
+  - title

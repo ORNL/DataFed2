@@ -42,8 +42,8 @@ basic:
           application/json:
             schema:
               $ref: '../components/schemas/token_grant.yaml'
-      '400':
-        $ref: "../components/responses/default.yaml#/nack"
+      #'400':
+      #  $ref: "../components/responses/default.yaml#/nack"
       '401':
         description: Authorization failed - invalid UID or password.
 
