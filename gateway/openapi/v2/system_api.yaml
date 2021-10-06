@@ -29,6 +29,8 @@ components:
       $ref: "components/schemas/folder.yaml"
     schema:
       $ref: "components/schemas/schema.yaml"
+    task:
+      $ref: "components/schemas/task.yaml"
     edge:
       $ref: "components/schemas/edge.yaml"
     token_grant:
@@ -203,6 +205,21 @@ paths:
 
   # ========== Annotations Endpoints ==========
 
+  /api/annotate/list:
+    $ref: "paths/annotate.yaml#/list"
+  /api/annotate/create:
+    $ref: "paths/annotate.yaml#/create"
+  /api/annotate/view:
+    $ref: "paths/annotate.yaml#/view"
+  /api/annotate/update:
+    $ref: "paths/annotate.yaml#/update"
+  /api/annotate/update/state:
+    $ref: "paths/annotate.yaml#/update_state"
+  /api/annotate/comment:
+    $ref: "paths/annotate.yaml#/comment"
+  /api/annotate/comment/edit:
+    $ref: "paths/annotate.yaml#/comment_edit"
+
   # ========== Repository Endpoints ==========
 
   # ========== Allocation Endpoints ==========
@@ -211,27 +228,27 @@ paths:
 
   # ========== Globus Endpoints ==========
 
-  #/api/globus/ep/recent/list:
-  #  $ref: "paths/globus.yaml#/ep_recent_list"
-  #/api/globus/ep/favorite/list:
-  #  $ref: "paths/globus.yaml#/ep_favorite_list"
-  #/api/globus/ep/favorite/add:
-  #  $ref: "paths/globus.yaml#/ep_favorite_add"
-  #/api/globus/ep/favorite/remove:
-  #  $ref: "paths/globus.yaml#/ep_favorite_remove"
-  #/api/globus/authz/verify:
-  #  $ref: "paths/globus.yaml#/authz_verify"
+  /api/globus/ep/recent/list:
+    $ref: "paths/globus.yaml#/ep_recent_list"
+  /api/globus/ep/favorite/list:
+    $ref: "paths/globus.yaml#/ep_favorite_list"
+  /api/globus/ep/favorite/add:
+    $ref: "paths/globus.yaml#/ep_favorite_add"
+  /api/globus/ep/favorite/remove:
+    $ref: "paths/globus.yaml#/ep_favorite_remove"
+  /api/globus/authz/verify:
+    $ref: "paths/globus.yaml#/authz_verify"
 
   # ========== Catalog Endpoints ==========
 
   # ========== Task Endpoints ==========
 
-  #/api/task/list:
-  #  $ref: "paths/task.yaml#/list"
-  #/api/task/view:
-  #  $ref: "paths/task.yaml#/view"
-  #/api/task/cancel:
-  #  $ref: "paths/task.yaml#/cancel"
+  /api/task/list:
+    $ref: "paths/task.yaml#/list"
+  /api/task/view:
+    $ref: "paths/task.yaml#/view"
+  /api/task/cancel:
+    $ref: "paths/task.yaml#/cancel"
 
 
   # ========== System Endpoints ==========

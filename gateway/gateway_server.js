@@ -26,10 +26,17 @@ if ( config.tls ){
 
 const app = fastify( fastify_opts );
 
-app.register( require('./routes/v2/anon'), { prefix: '/v2' });
+app.register( require('./routes/v2/general'), { prefix: '/v2' });
 app.register( require('./routes/v2/authn'), { prefix: '/v2/authn' });
 app.register( require('./routes/v2/user'), { prefix: '/v2/api/user' });
+app.register( require('./routes/v2/group'), { prefix: '/v2/api/group' });
+app.register( require('./routes/v2/project'), { prefix: '/v2/api/project' });
+app.register( require('./routes/v2/record'), { prefix: '/v2/api/record' });
+app.register( require('./routes/v2/folder'), { prefix: '/v2/api/folder' });
+app.register( require('./routes/v2/annotate'), { prefix: '/v2/api/annotate' });
 app.register( require('./routes/v2/schema'), { prefix: '/v2/api/schema' });
+app.register( require('./routes/v2/task'), { prefix: '/v2/api/task' });
+app.register( require('./routes/v2/globus'), { prefix: '/v2/api/globus' });
 
 
 // ============================================================================

@@ -1,0 +1,77 @@
+ep_recent_list:
+  get:
+    summary: List recently used Globus endpoints.
+    description: List recently used Globus endpoints.
+    tags:
+      - globus
+    parameters:
+      - $ref: '../components/parameters/offset.yaml'
+      - $ref: '../components/parameters/limit.yaml'
+    responses:
+      '200':
+        description: An array of Globus endpoints
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+ep_favorite_list:
+  get:
+    summary: List favorite Globus endpoints.
+    description: List favorite Globus endpoints.
+    tags:
+      - globus
+    parameters:
+      - $ref: '../components/parameters/offset.yaml'
+      - $ref: '../components/parameters/limit.yaml'
+    responses:
+      '200':
+        description: An array of Globus endpoints
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+ep_favorite_add:
+  post:
+    summary: Add favorite Globus endpoint.
+    description: Add favorite Globus endpoint.
+    tags:
+      - globus
+    responses:
+      '204':
+        $ref: "../components/responses/default.yaml#/ack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+ep_favorite_remove:
+  post:
+    summary: Remove favorite Globus endpoint.
+    description: Remove favorite Globus endpoint.
+    tags:
+      - globus
+    responses:
+      '204':
+        $ref: "../components/responses/default.yaml#/ack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+authz_verify:
+  get:
+    summary: Verify authorization for Globus action.
+    description: Verify authorization for Globus action.
+    tags:
+      - globus
+    responses:
+      '204':
+        $ref: "../components/responses/default.yaml#/ack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"

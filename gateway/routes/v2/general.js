@@ -1,8 +1,5 @@
 // ============================================================================
-// Anonymous API Methods
-
-var config = require('../../config');
-const jwt = require('jsonwebtoken');
+// General (anonymous) API Methods
 
 module.exports = function ( app, opts, done ) {
 

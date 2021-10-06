@@ -1,0 +1,11 @@
+type: object
+description: A task document
+required:
+  - id
+properties:
+  id:
+    type: string
+    description: Task identifier
+  owner:
+    type: string
+    description: Associated owner UID

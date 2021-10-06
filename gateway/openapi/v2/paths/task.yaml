@@ -1,0 +1,55 @@
+list:
+  get:
+    summary: List tasks.
+    description: List task.
+    tags:
+      - task
+    parameters:
+      - $ref: '../components/parameters/offset.yaml'
+      - $ref: '../components/parameters/limit.yaml'
+    responses:
+      '200':
+        description: An array of task documents
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "../components/schemas/task.yaml"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+view:
+  get:
+    summary: View task information.
+    description: View task information.
+    tags:
+      - task
+    parameters:
+      - name: id
+        in: query
+        description: Task ID
+        schema:
+          type: string
+    responses:
+      '200':
+        description: A task document
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas/task.yaml"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+cancel:
+  post:
+    summary: Cancel a queued task.
+    description: Cancel a queued task.
+    tags:
+      - task
+    responses:
+      '204':
+        $ref: "../components/responses/default.yaml#/ack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
