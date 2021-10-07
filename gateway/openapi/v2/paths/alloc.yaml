@@ -1,0 +1,189 @@
+list:
+  get:
+    summary: List allocations.
+    description: List allocations.
+    tags:
+      - allocation
+    parameters:
+      - $ref: '../components/parameters/offset.yaml'
+      - $ref: '../components/parameters/limit.yaml'
+    responses:
+      '200':
+        description: An array of allocation documents
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "../components/schemas/allocation.yaml"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+view:
+  get:
+    summary: View an allocation.
+    description: View an allocation.
+    tags:
+      - allocation
+    parameters:
+      - name: id
+        in: query
+        required: true
+        description: Allocation ID
+        schema:
+          type: string
+    responses:
+      '200':
+        description: An allocation document
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas/allocation.yaml"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+create:
+  post:
+    summary: Create a new allocation.
+    description: Create a new allocation.
+    tags:
+      - allocation
+    responses:
+      '200':
+        description: An allocation document
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas/allocation.yaml"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+update:
+  post:
+    summary: Update an existing allocation.
+    description: Update an existing allocation.
+    tags:
+      - allocation
+    parameters:
+      - name: id
+        in: query
+        required: true
+        description: Allocation ID
+        schema:
+          type: string
+    responses:
+      '204':
+        $ref: "../components/responses/default.yaml#/ack"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+delete:
+  post:
+    summary: Delete an existing allocation.
+    description: Delete an existing allocation.
+    tags:
+      - allocation
+    parameters:
+      - name: id
+        in: query
+        required: true
+        description: Allocation ID
+        schema:
+          type: string
+    responses:
+      '204':
+        $ref: "../components/responses/default.yaml#/ack"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+default_get:
+  get:
+    summary: Get default allocation.
+    description: Get default allocation.
+    tags:
+      - allocation
+    responses:
+      '200':
+        description: Default allocation document
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas/allocation.yaml"
+      '204':
+        $ref: "../components/responses/default.yaml#/ack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+default_set:
+  post:
+    summary: Set default allocation.
+    description: Set default allocation to specified ID.
+    tags:
+      - allocation
+    parameters:
+      - name: id
+        in: query
+        required: true
+        description: Allocation ID
+        schema:
+          type: string
+    responses:
+      '204':
+        $ref: "../components/responses/default.yaml#/ack"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+records_list:
+  get:
+    summary: List records using specified allocation.
+    description: List records using specified allocation.
+    tags:
+      - allocation
+    parameters:
+      - name: id
+        in: query
+        required: true
+        description: Allocation ID
+        schema:
+          type: string
+      - $ref: '../components/parameters/offset.yaml'
+      - $ref: '../components/parameters/limit.yaml'
+    responses:
+      '200':
+        description: An array of record documents
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "../components/schemas/record.yaml"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+statistics:
+  get:
+    summary: Get allocation statistics.
+    description: Get allocation statistics.
+    tags:
+      - allocation
+    parameters:
+      - name: id
+        in: query
+        required: true
+        description: Allocation ID
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Statistics doc (TBD)
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+

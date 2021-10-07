@@ -1,0 +1,12 @@
+type: object
+description: Saved search definition
+properties:
+  id:
+    type: string
+    description: Saved search identifier
+  title:
+    type: string
+    description: Title
+  to:
+    type: string
+    description: General description

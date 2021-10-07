@@ -1,0 +1,67 @@
+accounts_list:
+  get:
+    summary: List users and projects with data share.
+    description: List users and projects that have a data sharing relationship with the client.
+    tags:
+      - shares
+    parameters:
+      - name: dir
+        in: query
+        required: true
+        description: Direction of sharing from client perspective.
+        schema:
+          type: string
+          enum: [in, out]
+      - $ref: '../components/parameters/offset.yaml'
+      - $ref: '../components/parameters/limit.yaml'
+    responses:
+      '200':
+        description: An array of user and/or project documents
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                anyOf:
+                  - $ref: "../components/schemas/user.yaml"
+                  - $ref: "../components/schemas/project.yaml"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+items_list:
+  get:
+    summary: List shared records and collections.
+    description: List records and collections that have been shared between the client and another account.
+    tags:
+      - shares
+    parameters:
+      - name: account
+        in: query
+        required: true
+        description: The external user or project ID associated with the sharing relationship.
+        schema:
+          type: string
+      - name: dir
+        in: query
+        required: true
+        description: Direction of sharing from client perspective.
+        schema:
+          type: string
+          enum: [in, out]
+      - $ref: '../components/parameters/offset.yaml'
+      - $ref: '../components/parameters/limit.yaml'
+    responses:
+      '200':
+        description: An array of user and/or project documents
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                anyOf:
+                  - $ref: "../components/schemas/record.yaml"
+                  - $ref: "../components/schemas/folder.yaml"
+      '204':
+        description: No shared items found.
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"

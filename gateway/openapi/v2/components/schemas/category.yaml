@@ -1,0 +1,9 @@
+type: object
+description: A category document
+properties:
+  id:
+    type: string
+    description: Category ID
+  description:
+    type: string
+    description: General description of catalog category

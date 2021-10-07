@@ -29,15 +29,20 @@ components:
       $ref: "components/schemas/folder.yaml"
     schema:
       $ref: "components/schemas/schema.yaml"
+    category:
+      $ref: "components/schemas/category.yaml"
     task:
       $ref: "components/schemas/task.yaml"
     edge:
       $ref: "components/schemas/edge.yaml"
+    repository:
+      $ref: "components/schemas/repo.yaml"
+    allocation:
+      $ref: "components/schemas/allocation.yaml"
+    access_rule:
+      $ref: "components/schemas/access_rule.yaml"
     token_grant:
       $ref: "components/schemas/token_grant.yaml"
-  responses:
-    UnauthorizedError:
-      description: Access token is missing or invalid
 security:
   - bearerAuth: [] # Default auth is JWT bearer token
 paths:
@@ -101,6 +106,8 @@ paths:
 
   /api/project/list:
     $ref: "paths/project.yaml#/list"
+  /api/project/find:
+    $ref: "paths/project.yaml#/find"
   /api/project/create:
     $ref: "paths/project.yaml#/create"
   /api/project/view:
@@ -183,8 +190,27 @@ paths:
   /api/record/data/delete:
     $ref: "paths/record.yaml#/data_delete"
 
-
   # ========== Access Control Endpoints ==========
+
+  /api/access/permissions/verify:
+    $ref: "paths/access.yaml#/perm_verify"
+  /api/access/permissions/get:
+    $ref: "paths/access.yaml#/perm_get"
+  /api/access/rules/view:
+    $ref: "paths/access.yaml#/rules_view"
+  /api/access/rules/set:
+    $ref: "paths/access.yaml#/rules_set"
+  /api/access/rules/add:
+    $ref: "paths/access.yaml#/rules_add"
+  /api/access/rules/remove:
+    $ref: "paths/access.yaml#/rules_remove"
+
+  # ========== Data Sharing Endpoints ==========
+
+  /api/shares/accounts/list:
+    $ref: "paths/shares.yaml#/accounts_list"
+  /api/shares/items/list:
+    $ref: "paths/shares.yaml#/items_list"
 
   # ========== Schema Endpoints ==========
 
@@ -222,9 +248,63 @@ paths:
 
   # ========== Repository Endpoints ==========
 
+  /api/repo/list:
+    $ref: "paths/repo.yaml#/list"
+  /api/repo/view:
+    $ref: "paths/repo.yaml#/view"
+  /api/repo/create:
+    $ref: "paths/repo.yaml#/create"
+  /api/repo/update:
+    $ref: "paths/repo.yaml#/update"
+  /api/repo/delete:
+    $ref: "paths/repo.yaml#/delete"
+  /api/repo/statistics:
+    $ref: "paths/repo.yaml#/statistics"
+  /api/repo/alloc/list:
+    $ref: "paths/repo.yaml#/alloc_list"
+
   # ========== Allocation Endpoints ==========
 
+  # ----- User Role -----
+
+  /api/alloc/list:
+    $ref: "paths/alloc.yaml#/list"
+  /api/alloc/view:
+    $ref: "paths/alloc.yaml#/view"
+  /api/alloc/default/get:
+    $ref: "paths/alloc.yaml#/default_get"
+  /api/alloc/default/set:
+    $ref: "paths/alloc.yaml#/default_set"
+  /api/alloc/records/list:
+    $ref: "paths/alloc.yaml#/records_list"
+  /api/alloc/statistics:
+    $ref: "paths/alloc.yaml#/statistics"
+
+  # ----- Repo Admin Role -----
+
+  /api/alloc/create:
+    $ref: "paths/alloc.yaml#/create"
+  /api/alloc/update:
+    $ref: "paths/alloc.yaml#/update"
+  /api/alloc/delete:
+    $ref: "paths/alloc.yaml#/delete"
+
   # ========== Search Endpoints ==========
+
+  /api/search/run:
+    $ref: "paths/search.yaml#/run"
+  /api/search/save:
+    $ref: "paths/search.yaml#/save"
+  /api/search/saved/list:
+    $ref: "paths/search.yaml#/saved_list"
+  /api/search/saved/run:
+    $ref: "paths/search.yaml#/saved_run"
+  /api/search/saved/view:
+    $ref: "paths/search.yaml#/saved_view"
+  /api/search/saved/update:
+    $ref: "paths/search.yaml#/saved_update"
+  /api/search/saved/delete:
+    $ref: "paths/search.yaml#/saved_delete"
 
   # ========== Globus Endpoints ==========
 
@@ -241,6 +321,13 @@ paths:
 
   # ========== Catalog Endpoints ==========
 
+  /api/catalog/category/list:
+    $ref: "paths/catalog.yaml#/category_list"
+  /api/catalog/category/search:
+    $ref: "paths/catalog.yaml#/category_search"
+  /api/catalog/category/view:
+    $ref: "paths/catalog.yaml#/category_view"
+
   # ========== Task Endpoints ==========
 
   /api/task/list:
@@ -253,3 +340,4 @@ paths:
 
   # ========== System Endpoints ==========
 
+  # TBD

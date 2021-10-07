@@ -5,6 +5,11 @@ module.exports = function ( app, opts, done ) {
         a_resp.send( "project list" );
     });
 
+    app.post( '/find', ( a_req, a_resp ) => {
+        console.log("project find");
+        a_resp.send( "project find" );
+    });
+
     app.post( '/create', ( a_req, a_resp ) => {
         console.log("project create");
         a_resp.send( "project create" );

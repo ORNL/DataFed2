@@ -1,0 +1,26 @@
+type: object
+description: An allocation document
+required:
+  - id
+  - account
+  - repo
+  - data_limit
+  - record_limit
+properties:
+  id:
+    type: string
+    description: Allocation ID (system assigned)
+  account:
+    type: string
+    description: User or project ID that allocation is assigned to
+  repo:
+    type: string
+    description: Repository ID that allocation is assigned on
+  data_limit:
+    type: integer
+    minimum: 0
+    description: Maximum data storage capacity in kilobytes
+  record_limit:
+    type: integer
+    minimum: 0
+    description: Maximum number of records

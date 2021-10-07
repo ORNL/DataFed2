@@ -1,0 +1,106 @@
+list:
+  get:
+    summary: List repositories.
+    description: List repositories.
+    tags:
+      - repository
+    parameters:
+      - $ref: '../components/parameters/offset.yaml'
+      - $ref: '../components/parameters/limit.yaml'
+    responses:
+      '200':
+        description: An array of repository documents
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "../components/schemas/repo.yaml"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+view:
+  get:
+    summary: View repository information.
+    description: View repository information.
+    tags:
+      - repository
+    parameters:
+      - name: id
+        in: query
+        description: Group ID
+        schema:
+          type: string
+    responses:
+      '200':
+        description: A repository document
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas/repo.yaml"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+create:
+  post:
+    summary: Create a new repository.
+    description: Create a new repository.
+    tags:
+      - repository
+    responses:
+      '200':
+        description: A repository document
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas/repo.yaml"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+update:
+  post:
+    summary: Update an existing repository.
+    description: Update an existing repository.
+    tags:
+      - repository
+    responses:
+      '204':
+        $ref: "../components/responses/default.yaml#/ack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+delete:
+  post:
+    summary: Delete an existing repository.
+    description: Delete an existing repository.
+    tags:
+      - repository
+    responses:
+      '204':
+        $ref: "../components/responses/default.yaml#/ack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+statistics:
+  get:
+    summary: Get statistics for an existing repository.
+    description: Get statistics for an existing repository.
+    tags:
+      - repository
+    responses:
+      '200':
+        description: Repos statistics (TBD)
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+alloc_list:
+  get:
+    summary: List allocations on an existing repository.
+    description: List allocations on an existing repository.
+    tags:
+      - repository
+    responses:
+      '204':
+        $ref: "../components/responses/default.yaml#/ack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"

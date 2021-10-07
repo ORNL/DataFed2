@@ -1,0 +1,159 @@
+run:
+  post:
+    summary: Run search.
+    description: Run search.
+    tags:
+      - search
+    parameters:
+      - $ref: '../components/parameters/offset.yaml'
+      - $ref: '../components/parameters/limit.yaml'
+    responses:
+      '200':
+        description: An array of record or folder documents
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                anyOf:
+                  - $ref: "../components/schemas/record.yaml"
+                  - $ref: "../components/schemas/folder.yaml"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+save:
+  post:
+    summary: Save search.
+    description: Save search.
+    tags:
+      - search
+    responses:
+      '204':
+        description: Search saved successfully.
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+saved_list:
+  get:
+    summary: List saved searches.
+    description: List saved searches.
+    tags:
+      - search
+    parameters:
+      - $ref: '../components/parameters/offset.yaml'
+      - $ref: '../components/parameters/limit.yaml'
+    responses:
+      '200':
+        description: An array of search documents
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "../components/schemas/search_saved.yaml"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+saved_run:
+  post:
+    summary: Run saved search.
+    description: Run saved search.
+    tags:
+      - search
+    parameters:
+      - name: id
+        in: query
+        required: true
+        description: Saved search ID
+        schema:
+          type: string
+      - $ref: '../components/parameters/offset.yaml'
+      - $ref: '../components/parameters/limit.yaml'
+    responses:
+      '200':
+        description: An array of record or folder documents
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                anyOf:
+                  - $ref: "../components/schemas/record.yaml"
+                  - $ref: "../components/schemas/folder.yaml"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+saved_view:
+  get:
+    summary: View saved search.
+    description: View saved search.
+    tags:
+      - search
+    parameters:
+      - name: id
+        in: query
+        required: true
+        description: Saved search ID
+        schema:
+          type: string
+    responses:
+      '200':
+        description: A saved search document
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas/search_saved.yaml"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+saved_update:
+  post:
+    summary: Update saved search.
+    description: Update saved search.
+    tags:
+      - search
+    parameters:
+      - name: id
+        in: query
+        required: true
+        description: Saved search ID
+        schema:
+          type: string
+    responses:
+      '204':
+        description: Saved search updated successfully.
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+saved_delete:
+  post:
+    summary: Delete saved search.
+    description: Delete saved search.
+    tags:
+      - search
+    parameters:
+      - name: id
+        in: query
+        required: true
+        description: Saved search ID
+        schema:
+          type: string
+    responses:
+      '204':
+        description: Saved search deleted successfully.
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"

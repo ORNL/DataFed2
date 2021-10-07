@@ -19,6 +19,27 @@ list:
       '401':
         $ref: "../components/responses/default.yaml#/noauth"
 
+find:
+  post:
+    summary: Find projects.
+    description: Find projects by specified match criteria.
+    tags:
+      - project
+    parameters:
+      - $ref: '../components/parameters/offset.yaml'
+      - $ref: '../components/parameters/limit.yaml'
+    responses:
+      '200':
+        description: An array of project documents
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "../components/schemas/project.yaml"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
 view:
   get:
     summary: View project information.

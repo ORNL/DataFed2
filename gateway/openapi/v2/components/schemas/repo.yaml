@@ -1,0 +1,18 @@
+type: object
+description: A repository document
+required:
+  - id
+  - title
+properties:
+  id:
+    type: string
+    description: Record ID
+  title:
+    type: string
+    description: Title
+  description:
+    type: string
+    description: General record description, markdown allowed.
+  owner:
+    type: string
+    description: Group owner UID.

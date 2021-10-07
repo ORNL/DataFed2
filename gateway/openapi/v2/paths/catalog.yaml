@@ -1,0 +1,73 @@
+category_list:
+  get:
+    summary: List catalog categories.
+    description: List catalog categories.
+    tags:
+      - catalog
+    parameters:
+      - name: parent
+        in: query
+        description: Parent category ID
+        schema:
+          type: string
+      - $ref: '../components/parameters/offset.yaml'
+      - $ref: '../components/parameters/limit.yaml'
+    responses:
+      '200':
+        description: A list of category documents
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "../components/schemas/category.yaml"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+category_search:
+  post:
+    summary: Search for catalog categories by match criteria.
+    description: Search for catalog categories by match criteria.
+    tags:
+      - catalog
+    parameters:
+      - $ref: '../components/parameters/offset.yaml'
+      - $ref: '../components/parameters/limit.yaml'
+    responses:
+      '200':
+        description: An array of matching category documents
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "../components/schemas/category.yaml"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+category_view:
+  get:
+    summary: View catalog category information.
+    description: View catalog category information.
+    tags:
+      - catalog
+    parameters:
+      - name: id
+        in: query
+        required: true
+        description: Category ID
+        schema:
+          type: string
+    responses:
+      '200':
+        description: A category document
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas/category.yaml"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"

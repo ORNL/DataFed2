@@ -1,0 +1,179 @@
+perm_verify:
+  get:
+    summary: Verify permission on record or collection.
+    description: Verify client has specified permissions on given record or collection.
+    tags:
+      - access
+    parameters:
+      - name: item
+        in: query
+        required: true
+        description: Record or collection ID
+        schema:
+          type: string
+      - name: permissions
+        in: query
+        required: true
+        description: Permission bitmask to verify
+        schema:
+          type: integer
+          minimum: 1
+    responses:
+      '200':
+        description: Verification status document
+        content:
+          application/json:
+            schema:
+              type: boolean
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+perm_get:
+  get:
+    summary: Get permissions on record or collection.
+    description: Get client permissions on specified record or collection optionally restricting permissions to specified bitmask.
+    tags:
+      - access
+    parameters:
+      - name: item
+        in: query
+        required: true
+        description: Record or collection ID
+        schema:
+          type: string
+      - name: permissions
+        in: query
+        required: false
+        description: Permission bitmask to get
+        schema:
+          type: integer
+          minimum: 1
+    responses:
+      '200':
+        description: Permissions bitmask
+        content:
+          application/json:
+            schema:
+              type: integer
+              minimum: 0
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+rules_view:
+  get:
+    summary: View access control rules set on a given record or collection.
+    description: View access control rules set on a given record or collection.
+      This method is restricted to item owners and creators or clients with
+      "share" permission on item.
+    tags:
+      - access
+    parameters:
+      - name: item
+        in: query
+        required: true
+        description: Record or collection ID
+        schema:
+          type: string
+    responses:
+      '200':
+        description: A array of rule documents
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas/folder.yaml"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+rules_set:
+  post:
+    summary: Set all access control rules on a record or collection.
+    description: Set all access control rules on a record or collection
+      replacing existing access rules. Note that inherited permissions only apply
+      to folders. Only one rule may be specified per user/group.
+
+      This method is restricted to item owners and creators or clients with
+      "share" permission on item. Clients with share permission are disallowed
+      from setting permissions that exceed there own permissions on the given item.
+    tags:
+      - access
+    parameters:
+      - name: item
+        in: query
+        required: true
+        description: Record or collection ID
+        schema:
+          type: string
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: array
+            description: Array of access control rules.
+            items:
+              $ref: "../components/schemas/access_rule.yaml"
+    responses:
+      '204':
+        description: Rules updated successfully.
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+rules_add:
+  post:
+    summary: Add owners or more access control rules on a record or collection.
+    description: Add or replace one or more access control rules on a record or
+      collection for a given user or group. Note that inherited permissions only
+      apply to folders. Only one rule may be specified per user/group.
+
+      This method is restricted to item owners and creators or clients with
+      "share" permission on item. Clients with share permission are disallowed
+      from setting permissions that exceed there own permissions on the given item.
+    tags:
+      - access
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: array
+            description: Array of access control rules.
+            items:
+              $ref: "../components/schemas/access_rule.yaml"
+    responses:
+      '204':
+        description: Rule added/set successfully.
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+rules_remove:
+  post:
+    summary: Remove an existing access control rule on a record or collection.
+    description: Remove one or more access control rules from a record or
+      collection for given users or groups.
+
+      This method is restricted to item owners and creators or clients with
+      "share" permission on item. Clients with share permission are disallowed
+      from setting permissions that exceed there own permissions on the given item.
+    tags:
+      - access
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: array
+            description: Array of user or group ID.
+            items:
+              type: string
+    responses:
+      '204':
+        description: Rules removed successfully.
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"

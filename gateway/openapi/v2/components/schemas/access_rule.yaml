@@ -1,0 +1,16 @@
+type: object
+description: Data record or folder access control rule definition for a user or group
+properties:
+  id:
+    type: string
+    description: User or group ID that rule applies to
+  grant:
+    type: integer
+    minimum: 1
+    description: Bit mask for direct permissions
+  grant_inherit:
+    type: integer
+    minimum: 1
+    description: Bit mask for inherited permissions (folders only)
+required:
+  - id

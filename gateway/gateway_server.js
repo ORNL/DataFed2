@@ -33,8 +33,14 @@ app.register( require('./routes/v2/group'), { prefix: '/v2/api/group' });
 app.register( require('./routes/v2/project'), { prefix: '/v2/api/project' });
 app.register( require('./routes/v2/record'), { prefix: '/v2/api/record' });
 app.register( require('./routes/v2/folder'), { prefix: '/v2/api/folder' });
+app.register( require('./routes/v2/access'), { prefix: '/v2/api/access' });
+app.register( require('./routes/v2/shares'), { prefix: '/v2/api/shares' });
 app.register( require('./routes/v2/annotate'), { prefix: '/v2/api/annotate' });
 app.register( require('./routes/v2/schema'), { prefix: '/v2/api/schema' });
+app.register( require('./routes/v2/catalog'), { prefix: '/v2/api/catalog' });
+app.register( require('./routes/v2/search'), { prefix: '/v2/api/search' });
+app.register( require('./routes/v2/repo'), { prefix: '/v2/api/repo' });
+app.register( require('./routes/v2/alloc'), { prefix: '/v2/api/alloc' });
 app.register( require('./routes/v2/task'), { prefix: '/v2/api/task' });
 app.register( require('./routes/v2/globus'), { prefix: '/v2/api/globus' });
 
@@ -150,7 +156,6 @@ app.setErrorHandler( async ( err, a_req, a_resp ) => {
 
 console.log( "Starting DataFed gateway server" );
 
-
 app.listen( config.port, config.host, function( err, address ){
     if ( err ){
         console.log( err );
@@ -159,24 +164,3 @@ app.listen( config.port, config.host, function( err, address ){
 
     console.log( "DataFed gateway server listening on:", address );
 });
-
-/*
-app.ready( err => {
-    if (err){
-        throw err;
-    }
-
-    console.log( "Starting Swagger" );
-
-    app.swagger();
-
-    app.listen( config.port, config.host, function( err, address ){
-        if ( err ){
-            console.log( err );
-            process.exit( 1 );
-        }
-
-        console.log( "DataFed gateway server listening on:", address );
-    });
-});
-*/
