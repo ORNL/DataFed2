@@ -1,12 +1,17 @@
 run:
   post:
-    summary: Run search.
-    description: Run search.
+    summary: Search for data records or collections.
+    description: Search for data record or collections by specified match criteria.
     tags:
       - search
     parameters:
       - $ref: '../components/parameters/offset.yaml'
       - $ref: '../components/parameters/limit.yaml'
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/search_specification.yaml'
     responses:
       '200':
         description: An array of record or folder documents

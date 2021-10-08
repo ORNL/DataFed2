@@ -27,6 +27,12 @@ components:
       $ref: "components/schemas/record.yaml"
     folder:
       $ref: "components/schemas/folder.yaml"
+    search_specification:
+      $ref: "components/schemas/search_specification.yaml"
+    search_criteria:
+      $ref: "components/schemas/search_criteria.yaml"
+    search_saved:
+      $ref: "components/schemas/search_saved.yaml"
     schema:
       $ref: "components/schemas/schema.yaml"
     category:

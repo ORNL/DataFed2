@@ -1,0 +1,81 @@
+type: object
+description: |
+  The search_criteria document defines the parameters available for searching
+  for data records or collections. The search_criteria is used in the
+  search_specification document.
+
+  Individual search criteria are logically combined with an 'and' operator -
+  meaning candidates must satisfy all criteria to be returned; however, text
+  field combination may be controlled using the 'text_combine' parameter.
+properties:
+  # TODO Add allocation, create/update/data time, data size, data extension
+  id_alias:
+    type: string
+    minLength: 3
+    description: Partial ID or alias. May begin with '/' to match beginning of ID.
+  text:
+    type: object
+    description: Text search criteria. Title and description criteria are combined
+      using specified 'text_combine' operation ('or' is default).
+    properties:
+      title:
+        type: string
+        minLength: 3
+        description: |
+          Search for words or quoted phrases in title of document, with root word
+          analysis. Default combination is logical 'or'. Words or phrases may be
+          prefixed to change combination behavior, as follows:
+
+          '+' require word or phrase in match\
+          '-' do not include word or phrase in match
+      description:
+        type: string
+        minLength: 3
+        description: |
+          Search for words or quoted phrases in description of document, with root
+          word analysis. Default combination is logical 'or'. Words or phrases may
+          be prefixed to change combination behavior, as follows:
+
+          '+' require word or phrase in match\
+          '-' do not include word or phrase in match
+      text_combine:
+        type: string
+        enum: ['and','or']
+        default: 'and'
+        description: Specifies how to combine title and description parameters.
+  tags:
+    type: array
+    description: Array of tags.
+  category_tags:
+    type: array
+    description: Array of category tags (i.e. category path components) for published
+      data. Only valid for public data/collections.
+  date_from:
+    type: string
+    description: Match candidate 'update time' starting from specified date/time.
+  date_to:
+    type: string
+    description: Match candidate 'update time' up to and including specified date/time.
+  owner:
+    type: string
+    description: User or project ID of owner.
+  creator:
+    type: string
+    description: User ID of creator.
+  metadata:
+    type: object
+    description: Structured, domain-specific metadata search criteria.
+    properties:
+      schema_id:
+        type: string
+        description: Specifies a metadata schema ID that candidates must use to be
+          returned as a match.
+      has_errors:
+        type: boolean
+        description: Specifies whether match candidates should have metadata
+          validation errors or not. By default, validation status is not considered.
+      expression:
+        type: string
+        description: Specifies a metadata filter expression that must evaluate to 'true'
+          for candidates to be returned as a match. Refer to DataFed online documentation
+          for the syntax of metadata filter expressions.

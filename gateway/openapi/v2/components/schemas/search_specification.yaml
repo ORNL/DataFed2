@@ -1,0 +1,47 @@
+type: object
+description: |
+  The search_specification document defines the parameters required for
+  searching for data records or collections within DataFed. The
+  specification includes a scope (where to search) and criteria (how
+  to search).
+properties:
+  mode:
+    type: string
+    enum: ["data","collection"]
+    description: Specifies if search is for data records or collections.
+  scope:
+    type: object
+    description: Defines where search will be run. For private searches, one or more
+      collection IDs must be specified and the client must at least have read access
+      to them. For public searches, collection IDs are optional.
+    properties:
+      published:
+        type: boolean
+        description: Search published data if true; private data otherwise.
+        default: false
+      collections:
+        type: array
+        description: An array of collection IDs to search.
+        items:
+          type: string
+  criteria:
+    $ref: search_criteria.yaml
+  sorting:
+    type: object
+    description: Search sorting options
+    properties:
+      method:
+        type: string
+        enum: ['id','alias','title','owner','created','updated','relevance']
+        default: 'title'
+        description: Match result sorting. 'Relevance' method requires one or more
+          text fields to be specified in search criteria.
+      reverse:
+        type: boolean
+        default: false
+        description: If true, sort order will be reversed. Cannot be used with
+          'relevance' sort method.
+required:
+  - mode
+  - scope
+  - criteria
