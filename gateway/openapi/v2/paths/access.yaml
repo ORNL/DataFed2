@@ -84,7 +84,9 @@ rules_view:
         content:
           application/json:
             schema:
-              $ref: "../components/schemas/folder.yaml"
+              $ref: "../components/schemas/access_rule.yaml"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"
 

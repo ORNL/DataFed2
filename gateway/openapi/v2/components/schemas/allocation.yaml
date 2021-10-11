@@ -1,14 +1,9 @@
 type: object
 description: An allocation document
-required:
-  - id
-  - account
-  - repo
-  - data_limit
-  - record_limit
 properties:
   id:
     type: string
+    readOnly: true
     description: Allocation ID (system assigned)
   account:
     type: string
@@ -24,3 +19,4 @@ properties:
     type: integer
     minimum: 0
     description: Maximum number of records
+additionalProperties: false

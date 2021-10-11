@@ -1,10 +1,16 @@
 list:
   get:
     summary: List allocations.
-    description: List allocations.
+    description: List allocations associated with current user or specified project.
     tags:
       - allocation
     parameters:
+      - name: project_id
+        in: query
+        required: false
+        description: Project ID
+        schema:
+          type: string
       - $ref: '../components/parameters/offset.yaml'
       - $ref: '../components/parameters/limit.yaml'
     responses:
@@ -16,6 +22,8 @@ list:
               type: array
               items:
                 $ref: "../components/schemas/allocation.yaml"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"
 
@@ -47,9 +55,22 @@ view:
 create:
   post:
     summary: Create a new allocation.
-    description: Create a new allocation.
+    description: Create a new allocation. Requires repository adminstration permissions.
     tags:
       - allocation
+    requestBody:
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "../components/schemas/allocation.yaml"
+              - type: object
+                required:
+                  - account
+                  - repo
+                  - data_limit
+                  - record_limit
+
     responses:
       '200':
         description: An allocation document
@@ -57,13 +78,15 @@ create:
           application/json:
             schema:
               $ref: "../components/schemas/allocation.yaml"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"
 
 update:
   post:
     summary: Update an existing allocation.
-    description: Update an existing allocation.
+    description: Update an existing allocation. Requires repository adminstration permissions.
     tags:
       - allocation
     parameters:
@@ -73,6 +96,20 @@ update:
         description: Allocation ID
         schema:
           type: string
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data_limit:
+                type: integer
+                minimum: 0
+                description: Maximum data storage capacity in kilobytes
+              record_limit:
+                type: integer
+                minimum: 0
+                description: Maximum number of records
     responses:
       '204':
         $ref: "../components/responses/default.yaml#/ack"
@@ -84,7 +121,7 @@ update:
 delete:
   post:
     summary: Delete an existing allocation.
-    description: Delete an existing allocation.
+    description: Delete an existing allocation. Requires repository adminstration permissions.
     tags:
       - allocation
     parameters:
@@ -165,6 +202,8 @@ records_list:
               type: array
               items:
                 $ref: "../components/schemas/record.yaml"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"
 
@@ -184,6 +223,8 @@ statistics:
     responses:
       '200':
         description: Statistics doc (TBD)
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"
 
