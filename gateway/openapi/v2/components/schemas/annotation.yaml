@@ -1,0 +1,65 @@
+annotation:
+  allOf:
+    - $ref: '#/annotation_core'
+    - type: object
+      description: Annotation definition
+      properties:
+        id:
+          type: string
+          readOnly: true
+          description: Annotation ID
+        comments:
+          type: array
+          description: A time-ordered array of comments from involved parties. The
+            first comment is always from the creator of the annotation.
+          items:
+            $ref: '#/comment'
+
+annotation_core:
+  type: object
+  description: Annotation core properties
+  properties:
+    type:
+      $ref: '#/type'
+    state:
+      $ref: '#/state'
+    title:
+      type: string
+      description: Title
+
+type:
+  type: string
+  enum: ["information","warning","error"]
+  description: |
+    The type of annotation, as follows:
+    - "information" general information about the associated item.
+    - "warning" important information that could result in misuse or downstream errors if not headed
+    - "error" indication that the associated item contains errors and should not be used.
+
+state:
+  type: string
+  enum: ["active","open","closed"]
+  description: |
+    The state of the annotation, as follows:
+    - "active" means an issue is relevant to all users with access to the
+      associated item, and, when set, will trigger downstream propagation for warnings and errors.
+    - "open" means the issue/question is being investigated by the owner and/or
+      creator of the annotation.
+    - "closed" means the issue has been resolved and is no longer relevant.
+      Closed annotations may be re-opened, but will be purged after some time.
+      Associated downstream annotations will be closed when the parent annotation is closed.
+
+comment:
+  type: object
+  description: Annotation comment
+  properties:
+    comment:
+      type: string
+      description: Text of the comment
+    create_time:
+      type: integer
+      description: Timestamp when comment was created
+    update_time:
+      type: integer
+      description: Timestamp when comment was updated / edited
+

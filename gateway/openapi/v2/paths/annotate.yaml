@@ -1,10 +1,15 @@
 list:
   get:
-    summary: List annotations on data record or collection.
-    description: List annotations on data record or collection.
+    summary: List annotations on a data record or folder.
+    description: List annotations on a data record or folder.
     tags:
       - annotation
     parameters:
+      - name: id
+        in: query
+        description: Record or folder ID
+        schema:
+          type: string
       - $ref: '../components/parameters/offset.yaml'
       - $ref: '../components/parameters/limit.yaml'
     responses:
@@ -15,23 +20,9 @@ list:
             schema:
               type: array
               items:
-                $ref: "../components/schemas/annotate.yaml"
-      '401':
-        $ref: "../components/responses/default.yaml#/noauth"
-
-create:
-  post:
-    summary: Create a new annotation.
-    description: Create a new annotation.
-    tags:
-      - annotation
-    responses:
-      '200':
-        description: An annotation document
-        content:
-          application/json:
-            schema:
-              $ref: "../components/schemas/annotate.yaml"
+                $ref: "../components/schemas/annotation.yaml#/annotation"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"
 
@@ -53,31 +44,81 @@ view:
         content:
           application/json:
             schema:
-              $ref: "../components/schemas/annotate.yaml"
+              $ref: "../components/schemas/annotation.yaml#/annotation"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+create:
+  post:
+    summary: Create a new annotation.
+    description: Create a new annotation on a data record or folder.
+    tags:
+      - annotation
+    parameters:
+      - name: subject_id
+        in: query
+        description: Record or folder ID
+        schema:
+          type: string
+    requestBody:
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "../components/schemas/annotation.yaml#/annotation_core"
+              - type: object
+                properties:
+                  comment:
+                    type: string
+                    description: Initial annotation comment / description.
+                required:
+                  - type
+                  - title
+                  - comment
+    responses:
+      '200':
+        description: An annotation document
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas/annotation.yaml#/annotation"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"
 
 update:
   post:
     summary: Update an existing annotation.
-    description: Update an existing annotation.
+    description: Update type, state, and/or title for an existing annotation.
     tags:
       - annotation
+    parameters:
+      - name: id
+        in: query
+        description: Annotation ID
+        schema:
+          type: string
+    requestBody:
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "../components/schemas/annotation.yaml#/annotation_core"
+              - type: object
+                properties:
+                  comment:
+                    type: string
+                    description: Comment for why update was made.
+                required:
+                  - comment
     responses:
       '204':
         $ref: "../components/responses/default.yaml#/ack"
-      '401':
-        $ref: "../components/responses/default.yaml#/noauth"
-
-update_state:
-  post:
-    summary: Update state of an existing annotation.
-    description: Update state of an existing annotation.
-    tags:
-      - annotation
-    responses:
-      '204':
-        $ref: "../components/responses/default.yaml#/ack"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"
 
@@ -87,9 +128,17 @@ comment:
     description: Add comment to an existing annotation.
     tags:
       - annotation
+    parameters:
+      - name: id
+        in: query
+        description: Annotation ID
+        schema:
+          type: string
     responses:
       '204':
         $ref: "../components/responses/default.yaml#/ack"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"
 
@@ -99,8 +148,16 @@ comment_edit:
     description: Edit a comment on an existing annotation.
     tags:
       - annotation
+    parameters:
+      - name: id
+        in: query
+        description: Annotation ID
+        schema:
+          type: string
     responses:
       '204':
         $ref: "../components/responses/default.yaml#/ack"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"

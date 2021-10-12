@@ -70,7 +70,6 @@ create:
                   - repo
                   - data_limit
                   - record_limit
-
     responses:
       '200':
         description: An allocation document

@@ -17,38 +17,40 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
-    user:
-      $ref: "components/schemas/user.yaml"
-    project:
-      $ref: "components/schemas/project.yaml"
-    group:
-      $ref: "components/schemas/group.yaml"
-    record:
-      $ref: "components/schemas/record.yaml"
+    access_rule:
+      $ref: "components/schemas/access_rule.yaml"
+    allocation:
+      $ref: "components/schemas/allocation.yaml"
+    annotation:
+      $ref: "components/schemas/annotation.yaml#/annotation"
+    category:
+      $ref: "components/schemas/category.yaml"
+    edge:
+      $ref: "components/schemas/edge.yaml"
     folder:
       $ref: "components/schemas/folder.yaml"
-    search_specification:
-      $ref: "components/schemas/search_specification.yaml"
+    group:
+      $ref: "components/schemas/group.yaml"
+    project:
+      $ref: "components/schemas/project.yaml"
+    record:
+      $ref: "components/schemas/record.yaml"
+    repository:
+      $ref: "components/schemas/repo.yaml"
+    schema:
+      $ref: "components/schemas/schema.yaml"
     search_criteria:
       $ref: "components/schemas/search_criteria.yaml"
     search_saved:
       $ref: "components/schemas/search_saved.yaml"
-    schema:
-      $ref: "components/schemas/schema.yaml"
-    category:
-      $ref: "components/schemas/category.yaml"
+    search_specification:
+      $ref: "components/schemas/search_specification.yaml"
     task:
       $ref: "components/schemas/task.yaml"
-    edge:
-      $ref: "components/schemas/edge.yaml"
-    repository:
-      $ref: "components/schemas/repo.yaml"
-    allocation:
-      $ref: "components/schemas/allocation.yaml"
-    access_rule:
-      $ref: "components/schemas/access_rule.yaml"
     token_grant:
       $ref: "components/schemas/token_grant.yaml"
+    user:
+      $ref: "components/schemas/user.yaml"
 security:
   - bearerAuth: [] # Default auth is JWT bearer token
 paths:
@@ -196,6 +198,21 @@ paths:
   /api/record/data/delete:
     $ref: "paths/record.yaml#/data_delete"
 
+  # ========== Annotations Endpoints ==========
+
+  /api/annotate/list:
+    $ref: "paths/annotate.yaml#/list"
+  /api/annotate/create:
+    $ref: "paths/annotate.yaml#/create"
+  /api/annotate/view:
+    $ref: "paths/annotate.yaml#/view"
+  /api/annotate/update:
+    $ref: "paths/annotate.yaml#/update"
+  /api/annotate/comment:
+    $ref: "paths/annotate.yaml#/comment"
+  /api/annotate/comment/edit:
+    $ref: "paths/annotate.yaml#/comment_edit"
+
   # ========== Access Control Endpoints ==========
 
   /api/access/permissions/verify:
@@ -234,23 +251,6 @@ paths:
     $ref: "paths/schema.yaml#/revise"
   /api/schema/delete:
     $ref: "paths/schema.yaml#/delete"
-
-  # ========== Annotations Endpoints ==========
-
-  /api/annotate/list:
-    $ref: "paths/annotate.yaml#/list"
-  /api/annotate/create:
-    $ref: "paths/annotate.yaml#/create"
-  /api/annotate/view:
-    $ref: "paths/annotate.yaml#/view"
-  /api/annotate/update:
-    $ref: "paths/annotate.yaml#/update"
-  /api/annotate/update/state:
-    $ref: "paths/annotate.yaml#/update_state"
-  /api/annotate/comment:
-    $ref: "paths/annotate.yaml#/comment"
-  /api/annotate/comment/edit:
-    $ref: "paths/annotate.yaml#/comment_edit"
 
   # ========== Repository Endpoints ==========
 
