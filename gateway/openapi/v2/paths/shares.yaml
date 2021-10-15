@@ -60,7 +60,7 @@ items_list:
               items:
                 anyOf:
                   - $ref: "../components/schemas/record.yaml"
-                  - $ref: "../components/schemas/folder.yaml"
+                  - $ref: "../components/schemas/folder.yaml#/folder"
       '204':
         description: No shared items found.
       '401':

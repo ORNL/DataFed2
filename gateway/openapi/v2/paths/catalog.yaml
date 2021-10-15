@@ -1,20 +1,22 @@
 category_list:
   get:
     summary: List catalog categories.
-    description: List catalog categories.
+    description: List catalog categories. If a parent category is supplied,
+      sub-categories of the parent are listed; otherwise top-level categories
+      are listed.
     tags:
       - catalog
     parameters:
       - name: parent
         in: query
-        description: Parent category ID
+        description: Parent category name
         schema:
           type: string
       - $ref: '../components/parameters/offset.yaml'
       - $ref: '../components/parameters/limit.yaml'
     responses:
       '200':
-        description: A list of category documents
+        description: A list of category documents including id, name, and statistics.
         content:
           application/json:
             schema:
@@ -26,11 +28,17 @@ category_list:
 
 category_search:
   post:
-    summary: Search for catalog categories by match criteria.
-    description: Search for catalog categories by match criteria.
+    summary: Search for catalog categories by name.
+    description: Search for catalog categories by name with root word analysis.
     tags:
       - catalog
     parameters:
+      - name: name
+        in: query
+        description: Category name to match
+        schema:
+          type: string
+          minLength: 3
       - $ref: '../components/parameters/offset.yaml'
       - $ref: '../components/parameters/limit.yaml'
     responses:

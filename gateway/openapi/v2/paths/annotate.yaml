@@ -1,7 +1,15 @@
 list:
   get:
     summary: List annotations on a data record or folder.
-    description: List annotations on a data record or folder.
+    description: |
+      List annotations on a data record or folder. Only clients with read access
+      to the subject record or folder may list annotations. Depending on the
+      client relationship to the subject, only specific annotations will be
+      returned, as follows:
+
+      - Record owner/creator - all annotations are returned
+      - Annotation creator - all active annotations, and those created by the client are returned.
+      - Others - only active annotations are returned.
     tags:
       - annotation
     parameters:
@@ -29,7 +37,13 @@ list:
 view:
   get:
     summary: View annotation information.
-    description: View annotation information.
+    description: |
+      View annotation information. Depending on the client relationship to the
+      subject or annotation, only specific annotations can be viewed, as follows:
+
+      - Record owner/creator - any annotations can be viewed
+      - Annotation creator - any annotation created by the client may be viewed.
+      - Others - only active annotations may be viewed.
     tags:
       - annotation
     parameters:
@@ -53,7 +67,11 @@ view:
 create:
   post:
     summary: Create a new annotation.
-    description: Create a new annotation on a data record or folder.
+    description: Create a new annotation on a data record or folder. Any user
+      with read access to the specified data record or folder may create an
+      annotation; however, only the record or folder owner/creator may specify
+      the initial state of the annotation, and it may only be "open" (default)
+      or "active".
     tags:
       - annotation
     parameters:
@@ -92,7 +110,12 @@ create:
 update:
   post:
     summary: Update an existing annotation.
-    description: Update type, state, and/or title for an existing annotation.
+    description: |
+      Update type, state, and/or title for an existing annotation. Only the
+      annotation subject owner may update the annotation, and a comment must be
+      supplied explaining the reason(s) for the update. If the type or state is
+      changed on a data record, downstream dependent record annotations will be
+      updated as needed. This applies to "active" warnings and errors.
     tags:
       - annotation
     parameters:
@@ -125,7 +148,10 @@ update:
 comment:
   post:
     summary: Add comment to an existing annotation.
-    description: Add comment to an existing annotation.
+    description: |
+      Add comment to an existing annotation. Annotation state must be "open" and
+      only the annotation creator or the owner of the subject record or folder
+      may add comments.
     tags:
       - annotation
     parameters:
@@ -134,6 +160,17 @@ comment:
         description: Annotation ID
         schema:
           type: string
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              comment:
+                type: string
+                description: New comment, markdown supported.
+            required:
+              - comment
     responses:
       '204':
         $ref: "../components/responses/default.yaml#/ack"
@@ -145,7 +182,9 @@ comment:
 comment_edit:
   post:
     summary: Edit a comment on an existing annotation.
-    description: Edit a comment on an existing annotation.
+    description: Edit a comment on an existing annotation. Annotation state must
+      be "open" and only the original comment author may edit the specified
+      comment. The comment history is preserved for audit purposes.
     tags:
       - annotation
     parameters:
@@ -154,6 +193,21 @@ comment_edit:
         description: Annotation ID
         schema:
           type: string
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              comment_index:
+                type: integer
+                minimum: 0
+                description: Zero-based index of comment to edit
+              comment:
+                type: string
+                description: Edited comment, markdown supported.
+            required:
+              - comment
     responses:
       '204':
         $ref: "../components/responses/default.yaml#/ack"

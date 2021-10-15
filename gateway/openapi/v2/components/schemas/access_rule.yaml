@@ -12,5 +12,6 @@ properties:
     type: integer
     minimum: 1
     description: Bit mask for inherited permissions (folders only)
+additionalProperties: false
 required:
   - id

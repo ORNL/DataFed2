@@ -3,7 +3,32 @@ description: A category document
 properties:
   id:
     type: string
-    description: Category ID
+    readOnly: true
+    description: Internal category identifier
+  name:
+    type: string
+    description: Category name
+  path:
+    type: string
+    description: Parent category path
   description:
     type: string
-    description: General description of catalog category
+    description: General description and intended use of this category
+  update_time:
+    type: integer
+    minimum: 0
+    description: Timestamp of most recent update
+  statistics:
+    type: object
+    properties:
+      subcategories:
+        type: integer
+        minimum: 0
+        description: Number of sub-categories contained to this category
+      collections:
+        type: integer
+        minimum: 0
+        description: Number of collections contained in this category
+additionalProperties: false
+required:
+  - name

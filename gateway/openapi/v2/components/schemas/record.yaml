@@ -1,19 +1,112 @@
-type: object
-description: A data record document
-required:
-  - id
-  - title
-properties:
-  id:
-    type: string
-    #title: Group ID
-    description: Record ID
-  title:
-    type: string
-    description: Title
-  description:
-    type: string
-    description: General record description, markdown allowed.
-  owner:
-    type: string
-    description: Group owner UID.
+record:
+  allOf:
+    - $ref: '#/record_system'
+    - $ref: '#/record_user'
+    - type: object
+      description: Data record document
+      additionalProperties: false
+
+record_system:
+  type: object
+  description: System-generated data record fields
+  properties:
+    id:
+      type: string
+      readOnly: true
+      description: Data record internal identifier
+    owner:
+      type: string
+      readOnly: true
+      description: Owning user/project ID
+    creator:
+      type: string
+      readOnly: true
+      description: Creating user ID
+    create_time:
+      type: integer
+      minimum: 0
+      readOnly: true
+      description: Timestamp for record creation
+    update_time:
+      type: integer
+      minimum: 0
+      readOnly: true
+      description: Timestamp for most recent record update
+    data:
+      type: object
+      properties:
+        source:
+          type: string
+          readOnly: true
+          description: Full Globus path or URL to most recently uploaded raw data file.
+        size:
+          type: integer
+          minimum: 0
+          readOnly: true
+          description: Size, in bytes, of raw data.
+        upload_time:
+          type: integer
+          minimum: 0
+          readOnly: true
+          description: Timestamp for most recent raw data upload
+        download_time:
+          type: integer
+          minimum: 0
+          readOnly: true
+          description: Timestamp for most recent raw data download
+        download_count:
+          type: integer
+          minimum: 0
+          readOnly: true
+          description: Total number of downloads of raw data
+    validation:
+      type: object
+      properties:
+        has_errors:
+          type: boolean
+          readOnly: true
+          description: If true, has metadata schema validation error(s)
+        messages:
+          type: array
+          items:
+            string
+          readOnly: true
+          description: Metadata schema validation error messages
+    dependencies:
+
+  additionalProperties: false
+
+record_user:
+  type: object
+  description: User-specified data record document
+  properties:
+    alias:
+      type: string
+      description: Data record alias
+    title:
+      type: string
+      description: Data record title
+    description:
+      type: string
+      description: General description, markdown allowed.
+    tags:
+      type: array
+      items:
+        type: string
+      description: Array of tags to associate with data record.
+    metadata:
+      type: object
+      description: User defined metadata
+    schema:
+      type: string
+      description: Metadata schema ID
+    data:
+      type: object
+      properties:
+        unmanaged:
+          type: boolean
+          description: Flag indicating that specified raw data is not managed by DataFed (i.e. store externally)
+        format:
+          type: string
+          description: Format of raw data
+  additionalProperties: false

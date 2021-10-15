@@ -22,7 +22,7 @@ run:
               items:
                 anyOf:
                   - $ref: "../components/schemas/record.yaml"
-                  - $ref: "../components/schemas/folder.yaml"
+                  - $ref: "../components/schemas/folder.yaml#/folder"
       '400':
         $ref: "../components/responses/default.yaml#/nack"
       '401':
@@ -90,7 +90,7 @@ saved_run:
               items:
                 anyOf:
                   - $ref: "../components/schemas/record.yaml"
-                  - $ref: "../components/schemas/folder.yaml"
+                  - $ref: "../components/schemas/folder.yaml#/folder"
       '400':
         $ref: "../components/responses/default.yaml#/nack"
       '401':

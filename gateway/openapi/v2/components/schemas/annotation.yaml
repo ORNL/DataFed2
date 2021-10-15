@@ -14,6 +14,7 @@ annotation:
             first comment is always from the creator of the annotation.
           items:
             $ref: '#/comment'
+      additionalProperties: false
 
 annotation_core:
   type: object
@@ -26,6 +27,7 @@ annotation_core:
     title:
       type: string
       description: Title
+  additionalProperties: false
 
 type:
   type: string
@@ -62,4 +64,5 @@ comment:
     update_time:
       type: integer
       description: Timestamp when comment was updated / edited
+  additionalProperties: false
 

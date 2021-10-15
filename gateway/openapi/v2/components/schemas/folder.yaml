@@ -1,18 +1,54 @@
-type: object
-description: A folder document
-required:
-  - id
-  - title
-properties:
-  id:
-    type: string
-    description: Folder ID
-  title:
-    type: string
-    description: Title
-  description:
-    type: string
-    description: General description, markdown allowed.
-  owner:
-    type: string
-    description: Owner UID.
+folder:
+  allOf:
+    - $ref: '#/folder_system'
+    - $ref: '#/folder_user'
+    - type: object
+      description: Folder document
+      additionalProperties: false
+
+folder_system:
+  type: object
+  description: System-generated folder fields
+  properties:
+    id:
+      type: string
+      readOnly: true
+      description: Folder internal identifier
+    owner:
+      type: string
+      readOnly: true
+      description: Owning user/project ID
+    creator:
+      type: string
+      readOnly: true
+      description: Creating user ID
+  additionalProperties: false
+
+folder_user:
+  type: object
+  description: User-specified folder document
+  properties:
+    alias:
+      type: string
+      description: Folder alias
+    title:
+      type: string
+      description: Folder title
+    description:
+      type: string
+      description: General description, markdown allowed.
+    tags:
+      type: array
+      items:
+        type: string
+      description: Array of tags to associate with folder.
+    catalog_category:
+      type: string
+      description: If set, makes folder and all contained data records publicly
+        readable and visible in DataFed catalog under specified category. Clearing
+        the catalog category will revoke public read access to contained data
+        records (unless they are linked to other public folders).
+    metadata:
+      type: object
+      description: User defined metadata
+  additionalProperties: false

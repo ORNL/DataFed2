@@ -4,13 +4,20 @@ create:
     description: Create a new folder.
     tags:
       - folder
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: "../components/schemas/folder.yaml#/folder_user"
     responses:
       '200':
         description: A folder document
         content:
           application/json:
             schema:
-              $ref: "../components/schemas/folder.yaml"
+              $ref: "../components/schemas/folder.yaml#/folder"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"
 
@@ -23,7 +30,7 @@ view:
     parameters:
       - name: id
         in: query
-        description: Folder ID
+        description: Folder ID or alias
         schema:
           type: string
     responses:
@@ -32,7 +39,9 @@ view:
         content:
           application/json:
             schema:
-              $ref: "../components/schemas/folder.yaml"
+              $ref: "../components/schemas/folder.yaml#/folder"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"
 
@@ -42,21 +51,44 @@ update:
     description: Update an existing folder.
     tags:
       - folder
+    parameters:
+      - name: id
+        in: query
+        description: Folder ID or alias
+        schema:
+          type: string
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: "../components/schemas/folder.yaml#/folder_user"
     responses:
       '204':
         $ref: "../components/responses/default.yaml#/ack"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"
 
 delete:
   post:
     summary: Delete an existing folder.
-    description: Delete an existing folder.
+    description: Delete an existing folder. All data records and folders
+      contained in the deleted folder will also be deleted with the exception
+      of data records that are linked to other (independent) folders.
     tags:
       - folder
+    parameters:
+      - name: id
+        in: query
+        description: Folder ID or alias
+        schema:
+          type: string
     responses:
       '204':
         $ref: "../components/responses/default.yaml#/ack"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"
 
@@ -67,6 +99,11 @@ items_list:
     tags:
       - folder
     parameters:
+      - name: id
+        in: query
+        description: Folder ID or alias
+        schema:
+          type: string
       - $ref: '../components/parameters/offset.yaml'
       - $ref: '../components/parameters/limit.yaml'
     responses:
@@ -79,80 +116,191 @@ items_list:
               items:
                 anyOf:
                   - $ref: "../components/schemas/record.yaml"
-                  - $ref: "../components/schemas/folder.yaml"
+                  - $ref: "../components/schemas/folder.yaml#/folder"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"
 
 items_link:
   post:
     summary: Link items into an existing folder.
-    description: Link items into an existing folder.
+    description: |
+      Link data records and/or folders into the specified destination
+      folder. Folders being linked into the destination folder will also
+      be unlinked (moved) from their current parent folders. The following
+      conditions and restrictions apply:
+
+      - Requires LINK permission on destination folder.
+      - If client is not the owner of the destination folder or any of the items being linked,
+        the access control source of linked items cannot be changed.
+      - Any items already linked to the destination folder are ignored.
+      - The destination folder maximum item limit cannot be exceeded.
+      - Items must be owned by the same account as the destination folder.
+      - If items being linked include folders, additional constraints apply:
+        - Requires LINK permission on the source parent folder of folders being linked.
     tags:
       - folder
+    parameters:
+      - name: id
+        in: query
+        description: Destination folder ID or alias
+        schema:
+          type: string
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: string
+            description: Array of data record and/or folder IDs and/or aliases to link.
     responses:
       '204':
         $ref: "../components/responses/default.yaml#/ack"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"
 
 items_unlink:
   post:
     summary: Unlink items from an existing folder.
-    description: Unlink items from an existing folder.
+    description: |
+      Unlink data records and/or folders from the specified folder. Any unlinked
+      folders, as well as data records that are not linked elsewhere, will be re-
+      linked (moved) to the root folder. The following conditions and restrictions
+      apply:
+
+      - Requires LINK permission on parent folder.
+      - All items must be currently linked to the parent folder.
+      - If client is not the owner of the parent folder or any of the items being unlinked,
+        the access control source of unlinked items cannot be changed.
+      - If items are re-linked to the root folder:
+        - Requires LINK permission on the root folder.
+        - The root folder maximum item limit cannot be exceeded.
     tags:
       - folder
+    parameters:
+      - name: id
+        in: query
+        description: Parent folder ID or alias
+        schema:
+          type: string
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: string
+            description: Array of data record and/or folder IDs and/or aliases to unlink.
     responses:
       '204':
         $ref: "../components/responses/default.yaml#/ack"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"
 
 items_move:
   post:
     summary: Move items from a source folder to a destination folder.
-    description: Move items from a source folder to a destination folder.
+    description: |
+      Move selected data records and folders from specified source
+      folder to a specified destination folder.
+      The following conditions and restrictions
+      apply:
+
+      - Requires LINK permission on source and destination folders.
+      - The destination folder maximum item limit cannot be exceeded.
+      - Items must be owned by the same account as the destination folder.
+      - All items being moved must be currently linked to the source folder.
+      - Any items already linked to the destination folder are ignored.
+      - If client is not the owner of the destination folder or any of the
+        items being moved, the access control source of unlinked items cannot
+        be changed.
     tags:
       - folder
+    parameters:
+      - name: source_id
+        in: query
+        description: Source folder ID or alias
+        schema:
+          type: string
+      - name: destination_id
+        in: query
+        description: Destination folder ID or alias
+        schema:
+          type: string
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: string
+            description: Array of data record and/or folder IDs and/or aliases to move.
     responses:
       '204':
         $ref: "../components/responses/default.yaml#/ack"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"
 
 items_lock:
   post:
-    summary: Lock all items in an existing folder.
-    description: Lock all items in an existing folder.
+    summary: Lock all data records in an existing folder.
+    description: Lock all data records in an existing folder. Data records
+      that are already locked are ignored. LOCK permission is required on the
+      associated data records.
     tags:
       - folder
     parameters:
+      - name: id
+        in: query
+        description: Folder ID or alias
+        schema:
+          type: string
       - name: recurse
         in: query
-        description: Unlock items in all nested folders
+        description: Lock data records in all nested folders
         schema:
           type: boolean
           default: true
     responses:
       '204':
         $ref: "../components/responses/default.yaml#/ack"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"
 
 items_unlock:
   post:
-    summary: Unlock all items in an existing folder.
-    description: Unlock all items in an existing folder.
+    summary: Unlock all data records in an existing folder.
+    description: Unlock all data records in an existing folder. Data records that
+      are not currently locked are ignored. LOCK permission is required on the
+      associated data records.
     tags:
       - folder
     parameters:
+      - name: id
+        in: query
+        description: Folder ID or alias
+        schema:
+          type: string
       - name: recurse
         in: query
-        description: Unlock items in all nested folders
+        description: Unlock data records in all nested folders.
         schema:
           type: boolean
           default: true
     responses:
       '204':
         $ref: "../components/responses/default.yaml#/ack"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"

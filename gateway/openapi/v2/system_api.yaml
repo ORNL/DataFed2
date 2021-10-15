@@ -28,7 +28,7 @@ components:
     edge:
       $ref: "components/schemas/edge.yaml"
     folder:
-      $ref: "components/schemas/folder.yaml"
+      $ref: "components/schemas/folder.yaml#/folder"
     group:
       $ref: "components/schemas/group.yaml"
     project:
