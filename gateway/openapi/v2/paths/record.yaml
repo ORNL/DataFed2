@@ -1,29 +1,13 @@
-create:
-  post:
-    summary: Create a new data record.
-    description: Create a new data record.
-    tags:
-      - record
-    responses:
-      '200':
-        description: A data record document
-        content:
-          application/json:
-            schema:
-              $ref: "../components/schemas/record.yaml"
-      '401':
-        $ref: "../components/responses/default.yaml#/noauth"
-
 view:
   get:
     summary: View data record information.
-    description: View data record information.
+    description: View data record information. Requires REC_READ permission.
     tags:
       - record
     parameters:
       - name: id
         in: query
-        description: Record ID
+        description: Record ID or alias
         schema:
           type: string
     responses:
@@ -32,19 +16,89 @@ view:
         content:
           application/json:
             schema:
-              $ref: "../components/schemas/record.yaml"
+              $ref: "../components/schemas/record.yaml#/record"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
+      '401':
+        $ref: "../components/responses/default.yaml#/noauth"
+
+create:
+  post:
+    summary: Create one or more new data records.
+    description: Create one or more new data records. Specify parameters for
+      individual records in the 'records' field, and common properties may be
+      specified in the 'common' field. Requires CREATE permission on parent
+      folder(s).
+    tags:
+      - record
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              common:
+                $ref: "../components/schemas/record.yaml#/record_spec_com"
+              records:
+                type: array
+                description: Array of record creation specification documents
+                items:
+                  allOf:
+                    - $ref: "../components/schemas/record.yaml#/record_spec"
+                    - type: object
+                      required:
+                        - title
+                maxLength: 100
+            additionalProperties: false
+    responses:
+      '200':
+        description: An array of data record documents in the same order as the 'records' input parameter.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "../components/schemas/record.yaml#/record"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"
 
 update:
   post:
-    summary: Update an existing data record.
-    description: Update an existing data record.
+    summary: Update one or more existing data records.
+    description: Update one or more existing data records. Requires REC_WRITE permission.
+      Only fields included in request will be altered. To clear a field, it
+      should be included with a value of 'null'.
     tags:
       - record
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              common:
+                allOf:
+                  - $ref: "../components/schemas/record.yaml#/record_spec_com"
+                  - $ref: "#/update_opts"
+              records:
+                type: array
+                description: Array of record update specification documents
+                items:
+                  allOf:
+                    - $ref: "../components/schemas/record.yaml#/id"
+                    - $ref: "../components/schemas/record.yaml#/record_spec_com"
+                    - $ref: "#/update_opts"
+                    - type: object
+                      required:
+                        - id
+                      additionalProperties: false
     responses:
       '204':
         $ref: "../components/responses/default.yaml#/ack"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"
 
@@ -57,6 +111,8 @@ update_allocation:
     responses:
       '204':
         $ref: "../components/responses/default.yaml#/ack"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"
 
@@ -69,6 +125,8 @@ update_owner:
     responses:
       '204':
         $ref: "../components/responses/default.yaml#/ack"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"
 
@@ -81,6 +139,8 @@ delete:
     responses:
       '204':
         $ref: "../components/responses/default.yaml#/ack"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"
 
@@ -93,6 +153,8 @@ lock:
     responses:
       '204':
         $ref: "../components/responses/default.yaml#/ack"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"
 
@@ -105,6 +167,8 @@ unlock:
     responses:
       '204':
         $ref: "../components/responses/default.yaml#/ack"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"
 
@@ -120,7 +184,9 @@ import:
         content:
           application/json:
             schema:
-              $ref: "../components/schemas/record.yaml"
+              $ref: "../components/schemas/record.yaml#/record"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"
 
@@ -136,7 +202,9 @@ export:
         content:
           application/json:
             schema:
-              $ref: "../components/schemas/record.yaml"
+              $ref: "../components/schemas/record.yaml#/record"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"
 
@@ -148,7 +216,7 @@ prov_graph:
       - record
     responses:
       '200':
-        description: Provenance graph with data record vertices and dependency edges.
+        description: Provenance graph with data record vertices and dependency relationships.
           Vertices contain a "gen" attribute which indicates the vertices relative
           "latitude" within the pedigree tree for layout purposes.
         content:
@@ -159,13 +227,15 @@ prov_graph:
                 vertices:
                   type: array
                   items:
-                    $ref: "../components/schemas/record.yaml"
+                    $ref: "../components/schemas/record.yaml#/record"
                 edges:
                   type: array
                   items:
-                    $ref: "../components/schemas/edge.yaml"
+                    $ref: "../components/schemas/relationship.yaml"
       '204':
         description: Specified data record has no provenance information.
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"
 
@@ -178,18 +248,35 @@ metadata_validate:
     responses:
       '204':
         $ref: "../components/responses/default.yaml#/ack"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"
 
 data_download:
-  get:
-    summary: Download raw data from one or more data records.
-    description: Download raw data from one or more data records.
+  post:
+    summary: Download raw data from one or more data records and/or folders.
+    description: Download raw data from one or more data records and/or folders
+      to a specified destination path.
     tags:
       - record
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              ids:
+                type: array
+                items:
+                  type: string
+                description: Record and/or folder IDs or aliases to download.
+            additionalProperties: false
     responses:
       '204':
         $ref: "../components/responses/default.yaml#/ack"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"
 
@@ -202,6 +289,8 @@ data_upload:
     responses:
       '204':
         $ref: "../components/responses/default.yaml#/ack"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"
 
@@ -209,10 +298,57 @@ data_delete:
   post:
     summary: Delete raw data associated with one or more data records.
     description: Delete raw data associated with one or more data records.
+      Requires WRITE_DATA permission on specified records.
     tags:
       - record
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              ids:
+                type: array
+                items:
+                  type: string
+                description: Record IDs or aliases to have data deleted.
+            additionalProperties: false
     responses:
       '204':
         $ref: "../components/responses/default.yaml#/ack"
+      '400':
+        $ref: "../components/responses/default.yaml#/nack"
       '401':
         $ref: "../components/responses/default.yaml#/noauth"
+
+#-------------------- PARAMETERS / OPTIONS --------------------
+
+update_opts:
+  type: object
+  properties:
+    tags_add:
+      type: array
+      items:
+        type: string
+      description: Tags to add to specified records. Cannot be specified with 'tags' option.
+    tags_rem:
+      type: array
+      items:
+        type: string
+      description: Tags to remove from specified records. Cannot be specified with 'tags' option.
+    deps_add:
+      type: array
+      items:
+        $ref: "../components/schemas/relationship.yaml"
+      description: Outbound dependencies to add to specified records. Cannot be specified with 'deps' option.
+    deps_rem:
+      type: array
+      items:
+        $ref: "../components/schemas/relationship.yaml"
+      description: Outbound dependencies to remove from specified records. Relationship
+        metadata is not required. Cannot be specified with 'deps' option.
+    meta_merge:
+      type: boolean
+      default: true
+      description: If true, merge specified metadata with existing; otherwise
+        replace existing metadata for all specified records.

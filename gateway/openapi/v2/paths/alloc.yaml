@@ -200,7 +200,7 @@ records_list:
             schema:
               type: array
               items:
-                $ref: "../components/schemas/record.yaml"
+                $ref: "../components/schemas/record.yaml#/record"
       '400':
         $ref: "../components/responses/default.yaml#/nack"
       '401':

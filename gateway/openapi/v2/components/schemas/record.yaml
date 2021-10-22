@@ -1,112 +1,214 @@
 record:
-  allOf:
-    - $ref: '#/record_system'
-    - $ref: '#/record_user'
-    - type: object
-      description: Data record document
-      additionalProperties: false
-
-record_system:
   type: object
-  description: System-generated data record fields
+  description: Data record document
   properties:
     id:
-      type: string
-      readOnly: true
-      description: Data record internal identifier
+      $ref: '#/id'
     owner:
-      type: string
-      readOnly: true
-      description: Owning user/project ID
+      $ref: '#/owner'
     creator:
-      type: string
-      readOnly: true
-      description: Creating user ID
-    create_time:
-      type: integer
-      minimum: 0
-      readOnly: true
-      description: Timestamp for record creation
-    update_time:
-      type: integer
-      minimum: 0
-      readOnly: true
-      description: Timestamp for most recent record update
+      $ref: '#/creator'
+    ct:
+      $ref: '#/ct'
+    ut:
+      $ref: '#/ut'
+    alias:
+      $ref: '#/alias'
+    title:
+      $ref: '#/title'
+    descr:
+      $ref: '#/description'
+    tags:
+      $ref: '#/tags'
+    folders:
+      $ref: '#/folders'
     data:
       type: object
       properties:
         source:
-          type: string
-          readOnly: true
-          description: Full Globus path or URL to most recently uploaded raw data file.
+          $ref: '#/data_source'
         size:
-          type: integer
-          minimum: 0
-          readOnly: true
-          description: Size, in bytes, of raw data.
-        upload_time:
-          type: integer
-          minimum: 0
-          readOnly: true
-          description: Timestamp for most recent raw data upload
-        download_time:
-          type: integer
-          minimum: 0
-          readOnly: true
-          description: Timestamp for most recent raw data download
-        download_count:
-          type: integer
-          minimum: 0
-          readOnly: true
-          description: Total number of downloads of raw data
-    validation:
+          $ref: '#/data_size'
+        ut:
+          $ref: '#/data_ut'
+        alloc:
+          $ref: '#/data_alloc'
+        format:
+          $ref: '#/data_format'
+    meta:
+      type: object
+      description: Domain-specific metadata
+      properties:
+        content:
+          $ref: '#/meta_content'
+        schema_id:
+          $ref: '#/meta_schema_id'
+        schema_err:
+          $ref: '#/meta_schema_err'
+        schema_err_msg:
+          $ref: '#/meta_schema_err_msg'
+    deps:
       type: object
       properties:
-        has_errors:
-          type: boolean
-          readOnly: true
-          description: If true, has metadata schema validation error(s)
-        messages:
+        out:
           type: array
           items:
-            string
-          readOnly: true
-          description: Metadata schema validation error messages
-    dependencies:
-
+            $ref: 'relationship.yaml'
+          description: Data record provenance / relationships originating from this record
+        in:
+          type: array
+          items:
+            $ref: 'relationship.yaml'
+          description: Data record provenance / relationships originating from other records
   additionalProperties: false
 
-record_user:
+record_spec:
   type: object
-  description: User-specified data record document
+  description: Data record specification document for creation/update.
   properties:
     alias:
-      type: string
-      description: Data record alias
+      $ref: '#/alias'
     title:
-      type: string
-      description: Data record title
-    description:
-      type: string
-      description: General description, markdown allowed.
+      $ref: '#/title'
+    descr:
+      $ref: '#/description'
     tags:
-      type: array
-      items:
-        type: string
-      description: Array of tags to associate with data record.
-    metadata:
-      type: object
-      description: User defined metadata
-    schema:
-      type: string
-      description: Metadata schema ID
+      $ref: '#/tags'
+    folders:
+      $ref: '#/folders'
     data:
       type: object
       properties:
-        unmanaged:
-          type: boolean
-          description: Flag indicating that specified raw data is not managed by DataFed (i.e. store externally)
+        source:
+          $ref: '#/data_source'
+        alloc:
+          $ref: '#/data_alloc'
         format:
-          type: string
-          description: Format of raw data
-  additionalProperties: false
+          $ref: '#/data_format'
+    meta:
+      type: object
+      description: Domain-specific metadata
+      properties:
+        content:
+          $ref: '#/meta_content'
+        schema_id:
+          $ref: '#/meta_schema_id'
+    deps:
+      type: array
+      items:
+        $ref: 'relationship.yaml'
+      description: Data record provenance / relationships originating from this record
+
+record_spec_com:
+  type: object
+  description: Data record specification document for creation/update.
+  properties:
+    tags:
+      $ref: '#/tags'
+    folders:
+      $ref: '#/folders'
+    data:
+      type: object
+      properties:
+        alloc:
+          $ref: '#/data_alloc'
+        format:
+          $ref: '#/data_format'
+    meta:
+      type: object
+      description: Domain-specific metadata
+      properties:
+        content:
+          $ref: '#/meta_content'
+        schema_id:
+          $ref: '#/meta_schema_id'
+    deps:
+      type: array
+      items:
+        $ref: 'relationship.yaml'
+      description: Data record provenance / relationships originating from this record
+
+# ALL Available Record Fields
+
+id:
+  type: string
+  description: Data record internal identifier
+owner:
+  type: string
+  readOnly: true
+  description: Owning user/project ID
+creator:
+  type: string
+  readOnly: true
+  description: Creating user ID
+ct:
+  type: integer
+  minimum: 0
+  readOnly: true
+  description: Timestamp for record creation
+ut:
+  type: integer
+  minimum: 0
+  readOnly: true
+  description: Timestamp for most recent record update
+
+alias:
+  type: string
+  description: Data record alias
+title:
+  type: string
+  description: Data record title
+description:
+  type: string
+  description: General description, markdown allowed.
+tags:
+  type: array
+  items:
+    type: string
+  description: Array of tags to associate with data record.
+folders:
+  type: array
+  items:
+    type: string
+  description: Array of folder IDs that data record is linked to.
+
+data_source:
+  type: string
+  readOnly: true
+  description: Full Globus path or URL to source raw data file.
+data_size:
+  type: integer
+  minimum: 0
+  readOnly: true
+  description: Size, in bytes, of raw data.
+data_ut:
+  type: integer
+  minimum: 0
+  readOnly: true
+  description: Timestamp for most recent raw data update (upload/delete)
+data_alloc:
+  type: string
+  description: Allocation repository ID or 'none' for unmanaged data (i.e. externally
+    stored). If not specified, the configured default allocation will be used.
+data_format:
+  type: string
+  description: Format of raw data
+
+meta_schema_id:
+  type: string
+  description: Metadata schema ID
+meta_content:
+  type: object
+  description: User-specified metadata content (JSON)
+meta_schema_err:
+  type: boolean
+  readOnly: true
+  description: If true, has metadata schema validation error(s)
+meta_schema_err_msg:
+  type: array
+  items:
+    type: string
+  readOnly: true
+  description: Metadata schema validation error messages
+
+

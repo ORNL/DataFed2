@@ -1,0 +1,43 @@
+xfr_opts:
+  type: object
+  description: General Globus transfer options
+  properties:
+    encrypt:
+      type: string
+      enum: ["none","prefer","required"]
+      default: "prefer"
+      description: Transfer encryption options. Not all endpoints support encryption.
+    notify:
+      type: string
+      enum: ["none", "success", "failure", "both"]
+      default: "failure"
+      description: Send notification email on success, failure, or both
+
+xfr_opts_download:
+  type: object
+  description: Globus transfer download options
+  properties:
+    orig_names:
+      type: boolean
+      description: Download data using original (source) filenames.
+        Filename collisions will be detected and cause operation to abort.
+      default: false
+    dest_path:
+      type: string
+      description: Full path to download-specific destination directory.
+    structure:
+      type: string
+      enum: ["flat","folders"]
+      description: Options to control how data lands at destination. "flat" places
+        all data files in specified destination folder, "tree" recreates the source
+        folder hierarchy at the destination and places data files in their respective
+        folders.
+    verify_checksum:
+      type: boolean
+      default: true
+      description: Verify checksum on download
+
+xfr_opts_upload:
+  type: object
+  description: Globus transfer upload-specific options
+  properties:

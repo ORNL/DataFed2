@@ -25,8 +25,8 @@ components:
       $ref: "components/schemas/annotation.yaml#/annotation"
     category:
       $ref: "components/schemas/category.yaml"
-    edge:
-      $ref: "components/schemas/edge.yaml"
+    relationship:
+      $ref: "components/schemas/relationship.yaml"
     folder:
       $ref: "components/schemas/folder.yaml#/folder"
     group:
@@ -34,7 +34,7 @@ components:
     project:
       $ref: "components/schemas/project.yaml"
     record:
-      $ref: "components/schemas/record.yaml"
+      $ref: "components/schemas/record.yaml#/record"
     repository:
       $ref: "components/schemas/repo.yaml"
     schema:

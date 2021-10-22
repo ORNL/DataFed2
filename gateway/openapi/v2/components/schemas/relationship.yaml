@@ -1,0 +1,18 @@
+type: object
+description: Definition of a relationship between an assumed record context and
+  a subject record. The placement of relationship information in a record payload
+  determines the direction of the relationship with subject records. New relationships
+  are always specified from the originating record (outbound direction).
+properties:
+  type:
+    type: string
+    description: Edge type identifier (dynamic enumeration)
+  subj:
+    type: string
+    description: Record ID or alias of relationship subject
+  meta:
+    type: object
+    description: Relationship type-specific metadata
+required:
+  - type
+  - subj
