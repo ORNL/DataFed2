@@ -44,7 +44,7 @@ router.get('/authn/token', function (req, res) {
 .summary('Authenticate user')
 .description('Authenticate user using access token');
 
-router.get('/create', function (req, res) {
+router.post('/create', function (req, res) {
     try {
         var result;
 
@@ -136,17 +136,25 @@ router.get('/create', function (req, res) {
         g_lib.handleException( e, res );
     }
 })
-.queryParam('secret', joi.string().required(), "System secret required to authorize this action")
-.queryParam('uid', joi.string().required(), "SDMS user ID (globus) for new user")
-.queryParam('password', joi.string().optional().allow(""), "New CLI password")
-.queryParam('name', joi.string().required(), "Name")
-.queryParam('email', joi.string().optional(), "Email")
-.queryParam('options', joi.string().optional(), "Application options (JSON string)")
-.queryParam('uuids', joi.array().items(joi.string()).required(), "Globus identities (UUIDs)")
-.queryParam('is_admin', joi.boolean().optional(), "New account is a system administrator")
+.body( joi.object({
+  secret: joi.string().required(),
+  uid: joi.string().required(),
+  password: joi.string().optional().allow(""),
+  name: joi.string().required(),
+  email: joi.string().optional(),
+  options: joi.string().optional(),
+  uuids: joi.array().items(joi.string()).required(),
+  is_admin: joi.boolean().optional()}),
+  "System secret required to authorize this action"
+  "SDMS user ID (globus) for new user"
+  "Name"
+  "Email"
+  "Application options (JSON string)"
+  "Globus identities (UUIDs)"
+  "New account is a system administrator"
+)
 .summary('Create new user entry')
 .description('Create new user entry.');
-
 
 router.get('/update', function (req, res) {
     try {
