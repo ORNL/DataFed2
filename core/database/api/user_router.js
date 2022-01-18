@@ -55,14 +55,14 @@ router.post('/create', function (req, res) {
             },
             action: function() {
                 var cfg = g_db.config.document("config/system");
-                if ( req.queryParams.secret != cfg.secret ){
-                    console.log("ERROR: user create called with incorrect system secret. uid:", req.queryParams.uid, ", name:", req.queryParams.name );
+                if ( req.body.secret != cfg.secret ){
+                    console.log("ERROR: user create called with incorrect system secret. uid:", req.body.uid, ", name:", req.body.name );
                     throw [g_lib.ERR_AUTHN_FAILED, "Invalid system credentials"];
                 }
 
                 var i, j, c,
                     time = Math.floor( Date.now()/1000 ),
-                    name = req.queryParams.name.trim(),
+                    name = req.body.name.trim(),
                     idx = name.lastIndexOf(" ");
 
                 if ( idx < 1 )
@@ -72,11 +72,11 @@ router.post('/create', function (req, res) {
                     fname = name.substr( 0, idx ).trim();
 
                 var user_data = {
-                    _key: req.queryParams.uid,
-                    name: name.toLowerCase() + " " + req.queryParams.uid,
+                    _key: req.body.uid,
+                    name: name.toLowerCase() + " " + req.body.uid,
                     name_first: fname,
                     name_last: lname,
-                    is_admin: req.queryParams.is_admin,
+                    is_admin: req.body.is_admin,
                     max_coll: g_lib.DEF_MAX_COLL,
                     max_proj: g_lib.DEF_MAX_PROJ,
                     max_sav_qry: g_lib.DEF_MAX_SAV_QRY,
@@ -84,24 +84,24 @@ router.post('/create', function (req, res) {
                     ut: time
                 };
 
-                if ( req.queryParams.password ){
-                    g_lib.validatePassword( req.queryParams.password );
-                    user_data.password = req.queryParams.password;
+                if ( req.body.password ){
+                    g_lib.validatePassword( req.body.password );
+                    user_data.password = req.body.password;
                 }
 
-                if ( req.queryParams.email ){
-                    user_data.email = req.queryParams.email;
+                if ( req.body.email ){
+                    user_data.email = req.body.email;
                 }
 
-                if ( req.queryParams.options ){
-                    user_data.options = req.queryParams.options;
+                if ( req.body.options ){
+                    user_data.options = req.body.options;
                 }
 
                 var user = g_db.u.save( user_data, { returnNew: true });
 
-                var root = g_db.c.save({ _key: "u_" + req.queryParams.uid + "_root", is_root: true, owner: user._id, title: "Root Collection", desc: "Root collection for user " + req.queryParams.name + " (" + req.queryParams.uid +")", alias: "root" }, { returnNew: true });
+                var root = g_db.c.save({ _key: "u_" + req.body.uid + "_root", is_root: true, owner: user._id, title: "Root Collection", desc: "Root collection for user " + req.body.name + " (" + req.body.uid +")", alias: "root" }, { returnNew: true });
 
-                var alias = g_db.a.save({ _key: "u:" + req.queryParams.uid + ":root" }, { returnNew: true });
+                var alias = g_db.a.save({ _key: "u:" + req.body.uid + ":root" }, { returnNew: true });
                 g_db.owner.save({ _from: alias._id, _to: user._id });
 
                 g_db.alias.save({ _from: root._id, _to: alias._id });
@@ -109,18 +109,18 @@ router.post('/create', function (req, res) {
 
                 var uuid;
 
-                for ( i in req.queryParams.uuids ) {
-                    uuid = "uuid/" + req.queryParams.uuids[i];
+                for ( i in req.body.uuids ) {
+                    uuid = "uuid/" + req.body.uuids[i];
                     if ( g_db._exists({ _id: uuid }))
                         throw [g_lib.ERR_IN_USE,"ERROR: linked identity value, "+uuid+", already in use"];
 
-                    g_db.uuid.save({ _key: req.queryParams.uuids[i] }, { returnNew: true });
+                    g_db.uuid.save({ _key: req.body.uuids[i] }, { returnNew: true });
                     g_db.ident.save({ _from: user._id, _to: uuid });
                 }
 
                 user.new.uid = user.new._id;
-                if ( req.queryParams.admins )
-                    user.new.admins = req.queryParams.admins;
+                if ( req.body.admins )
+                    user.new.admins = req.body.admins;
 
                 delete user.new._id;
                 delete user.new._key;
