@@ -243,12 +243,12 @@ router.get('/update', function (req, res) {
 .description('Update user information');
 
 
-router.get('/find/by_uuids', function (req, res) {
+router.post('/find/by_uuids', function (req, res) {
     try {
         // Convert UUIDs to DB _ids
         var uuids = [];
-        for ( var i in req.queryParams.uuids ) {
-            uuids.push( "uuid/" + req.queryParams.uuids[i] );
+        for ( var i in req.body.uuids ) {
+            uuids.push( "uuid/" + req.body.uuids[i] );
         }
 
         var user = g_lib.findUserFromUUIDs( uuids );
@@ -270,7 +270,9 @@ router.get('/find/by_uuids', function (req, res) {
         g_lib.handleException( e, res );
     }
 })
-.queryParam('uuids', joi.array().items(joi.string()).required(), "User UUID List")
+.body(joi.object({
+  uuids: joi.array().items(joi.string()).required()}),
+  "User UUID List")
 .summary('Find a user from list of UUIDs')
 .description('Find a user from list of UUIDs');
 
