@@ -145,14 +145,10 @@ router.post('/create', function (req, res) {
   options: joi.string().optional(),
   uuids: joi.array().items(joi.string()).required(),
   is_admin: joi.boolean().optional()}),
-  "System secret required to authorize this action"
-  "SDMS user ID (globus) for new user"
-  "Name"
-  "Email"
-  "Application options (JSON string)"
-  "Globus identities (UUIDs)"
-  "New account is a system administrator"
-)
+  "System secret required to authorize this action \
+  \nName \
+  \nEmail \
+  \nApplication options (JSON string)")
 .summary('Create new user entry')
 .description('Create new user entry.');
 
@@ -270,9 +266,12 @@ router.post('/find/by_uuids', function (req, res) {
         g_lib.handleException( e, res );
     }
 })
-.body(joi.object({
-  uuids: joi.array().items(joi.string()).required()}),
-  "User UUID List")
+.body(
+  joi.object({
+  uuids: joi.array().items(joi.string()).required()
+  }),
+  "User UUID List"
+)
 .summary('Find a user from list of UUIDs')
 .description('Find a user from list of UUIDs');
 
@@ -860,16 +859,21 @@ router.get('/ep/get', function (req, res) {
 .summary('Get recent end-points')
 .description('Get recent end-points');
 
-router.get('/ep/set', function (req, res) {
+router.post('/ep/set', function (req, res) {
     try {
         const client = g_lib.getUserFromClientID( req.queryParams.client );
-        g_db._update( client._id, {eps:req.queryParams.eps}, { keepNull: false });
+        g_db._update( client._id, {eps:req.body.eps}, { keepNull: false });
     } catch( e ) {
         g_lib.handleException( e, res );
     }
 })
-.queryParam('client', joi.string().required(), "Client ID")
-.queryParam('eps', joi.array().items(joi.string()).required(), "End-points (UUIDs or legacy names)")
+.body(
+  joi.object({
+  client: joi.string().required(),
+  eps: joi.array().items(joi.string()).required()
+  }),
+  "Client ID\nEnd-points (UUIDs or legacy names)"
+)
 .summary('Set recent end-points')
 .description('Set recent end-points');
 
