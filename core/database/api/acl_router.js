@@ -11,7 +11,7 @@ module.exports = router;
 
 //==================== ACL API FUNCTIONS
 
-router.get('/update', function (req, res) {
+router.post('/update', function (req, res) {
     try {
         var result = [];
 
@@ -21,8 +21,8 @@ router.get('/update', function (req, res) {
                 write: ["c","d","acl"]
             },
             action: function() {
-                const client = g_lib.getUserFromClientID( req.queryParams.client );
-                var object = g_lib.getObject( req.queryParams.id, client );
+                const client = g_lib.getUserFromClientID( req.body.client );
+                var object = g_lib.getObject( req.body.id, client );
                 var owner_id = g_db.owner.firstExample({ _from: object._id })._to;
                 //var owner = g_db._document( owner_id );
                 //owner_id = owner_id.substr(2);
@@ -57,14 +57,14 @@ router.get('/update', function (req, res) {
                 var acl_mode = 0;
                 var new_obj = {};
 
-                if ( req.queryParams.rules ){
+                if ( req.body.rules ){
                     // Delete existing ACL rules for this object
                     g_db.acl.removeByExample({ _from: object._id });
 
                     var rule, obj, old_rule, chg;
 
-                    for ( var i in req.queryParams.rules ) {
-                        rule = req.queryParams.rules[i];
+                    for ( var i in req.body.rules ) {
+                        rule = req.body.rules[i];
 
                         if ( !is_coll && rule.inhgrant )
                             throw [g_lib.ERR_INVALID_PARAM,"Inherited permissions cannot be applied to data records"];
@@ -130,9 +130,15 @@ router.get('/update', function (req, res) {
         g_lib.handleException( e, res );
     }
 })
-.queryParam('client', joi.string().required(), "Client ID")
-.queryParam('id', joi.string().required(), "ID or alias of data record or collection")
-.queryParam('rules', joi.array().items(g_lib.acl_schema).optional(), "User and/or group ACL rules to create")
+.body( joi.object({
+  client: joi.string().required(),
+  id: joi.string().required(),
+  rules: joi.array().items(g_lib.acl_schema).optional()
+}),
+  "Client ID \
+  \nID or alias of data record or collection \
+  \nUser and /or group ACL rules to create"
+)
 .summary('Update ACL(s) on a data record or collection')
 .description('Update access control list(s) (ACLs) on a data record or collection. Inherited permissions can only be set on collections.');
 
