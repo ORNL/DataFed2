@@ -13,7 +13,7 @@ module.exports = router;
 //==================== PROJECT API FUNCTIONS
 
 
-router.get('/create', function (req, res) {
+router.post('/create', function (req, res) {
     try {
         var result;
 
@@ -23,7 +23,7 @@ router.get('/create', function (req, res) {
                 write: ["p","c","a","g","acl","owner","ident","alias","admin","member"]
             },
             action: function() {
-                const client = g_lib.getUserFromClientID( req.queryParams.client );
+                const client = g_lib.getUserFromClientID( req.body.client );
 
                 // Must be a repo admin to create a project
                 var repos = g_db._query("for v in 1..1 inbound @user admin filter is_same_collection('repo',v) limit 1 return v._key", { user: client._id } ).toArray();
@@ -45,9 +45,9 @@ router.get('/create', function (req, res) {
                     ut: time
                 };
 
-                g_lib.procInputParam( req.queryParams, "id", false, proj_data ); // Sets _key field
-                g_lib.procInputParam( req.queryParams, "title", false, proj_data );
-                g_lib.procInputParam( req.queryParams, "desc", false, proj_data );
+                g_lib.procInputParam( req.body, "id", false, proj_data ); // Sets _key field
+                g_lib.procInputParam( req.body, "title", false, proj_data );
+                g_lib.procInputParam( req.body, "desc", false, proj_data );
 
                 var proj = g_db.p.save( proj_data, { returnNew: true });
                 g_db.owner.save({ _from: proj._id, _to: client._id });
@@ -72,9 +72,9 @@ router.get('/create', function (req, res) {
                 proj.new.members = [];
                 var uid;
 
-                if ( req.queryParams.admins ) {
-                    for ( i in req.queryParams.admins ) {
-                        uid = req.queryParams.admins[i];
+                if ( req.body.admins ) {
+                    for ( i in req.body.admins ) {
+                        uid = req.body.admins[i];
                         if ( uid == client._id )
                             continue;
                         if ( !g_db._exists( uid ))
@@ -85,9 +85,9 @@ router.get('/create', function (req, res) {
                     }
                 }
 
-                if ( req.queryParams.members ) {
-                    for ( i in req.queryParams.members ) {
-                        uid = req.queryParams.members[i];
+                if ( req.body.members ) {
+                    for ( i in req.body.members ) {
+                        uid = req.body.members[i];
                         if ( uid == client._id || proj.new.admins.indexOf( uid ) != -1 )
                             continue;
                         if ( !g_db._exists( uid ))
@@ -112,17 +112,24 @@ router.get('/create', function (req, res) {
         g_lib.handleException( e, res );
     }
 })
-.queryParam('client', joi.string().required(), "Client ID")
-.queryParam('id', joi.string().optional().allow(""), "ID for new project")
-.queryParam('title', joi.string().optional().allow(""), "Title")
-.queryParam('desc', joi.string().optional().allow(""), "Description")
-.queryParam('admins', joi.array().items(joi.string()).optional(), "Additional project administrators (uids)")
-.queryParam('members', joi.array().items(joi.string()).optional(), "Project members (uids)")
+.body( joi.object({
+  client: joi.string().required(),
+  id: joi.string().optional().allow(""),
+  title: joi.string().optional().allow(""),
+  desc: joi.string().optional().allow(""),
+  admins: joi.array().items(joi.string()).optional(),
+  members: joi.array().items(joi.string()).optional()
+}),
+"Client ID \
+\nID for new project \
+\nTitle \
+\nDescription \
+\nAdditional project administrators (uids) \
+\nProject members (uids)")
 .summary('Create new project')
 .description('Create new project.');
 
-
-router.get('/update', function (req, res) {
+router.post('/update', function (req, res) {
     try {
         var result;
 
@@ -132,8 +139,8 @@ router.get('/update', function (req, res) {
                 write: ["p","admin","member","acl"]
             },
             action: function() {
-                const client = g_lib.getUserFromClientID( req.queryParams.client );
-                var proj_id = req.queryParams.id;
+                const client = g_lib.getUserFromClientID( req.body.client );
+                var proj_id = req.body.id;
 
                 if ( !g_db.p.exists( proj_id ))
                     throw [ g_lib.ERR_INVALID_PARAM, "No such project '" + proj_id + "'" ];
@@ -151,12 +158,12 @@ router.get('/update', function (req, res) {
                 var time = Math.floor( Date.now()/1000 );
                 var obj = { ut: time };
 
-                g_lib.procInputParam( req.queryParams, "title", true, obj );
-                g_lib.procInputParam( req.queryParams, "desc", true, obj );
+                g_lib.procInputParam( req.body, "title", true, obj );
+                g_lib.procInputParam( req.body, "desc", true, obj );
 
                 // Managers can only update members
                 if ( !is_admin ){
-                    if ( obj.title !== undefined || obj.desc != undefined || req.queryParams.admins != undefined ){
+                    if ( obj.title !== undefined || obj.desc != undefined || req.body.admins != undefined ){
                         throw g_lib.ERR_PERM_DENIED;
                     }
                 }
@@ -167,11 +174,11 @@ router.get('/update', function (req, res) {
                 proj.new.admins = [];
                 proj.new.members = [];
 
-                if ( req.queryParams.admins ) {
+                if ( req.body.admins ) {
                     var links;
                     g_db.admin.removeByExample({ _from: proj_id });
-                    for ( i in req.queryParams.admins ) {
-                        uid = req.queryParams.admins[i];
+                    for ( i in req.body.admins ) {
+                        uid = req.body.admins[i];
                         if ( uid == owner_id )
                             continue;
                         if ( !g_db._exists( uid ))
@@ -197,11 +204,11 @@ router.get('/update', function (req, res) {
                     }
                 }
 
-                if ( req.queryParams.members ) {
+                if ( req.body.members ) {
                     var mem_grp = g_db.g.firstExample({ uid: proj_id, gid: "members" });
                     g_db.member.removeByExample({ _from: mem_grp._id });
-                    for ( i in req.queryParams.members ) {
-                        uid = req.queryParams.members[i];
+                    for ( i in req.body.members ) {
+                        uid = req.body.members[i];
                         if ( uid == owner_id || proj.new.admins.indexOf( uid ) != -1 )
                             continue;
                         if ( !g_db._exists( uid ))
@@ -232,12 +239,21 @@ router.get('/update', function (req, res) {
         g_lib.handleException( e, res );
     }
 })
-.queryParam('client', joi.string().required(), "Client ID")
-.queryParam('id', joi.string().required(), "Project ID")
-.queryParam('title', joi.string().optional().allow(''), "New title")
-.queryParam('desc', joi.string().optional().allow(''), "Description")
-.queryParam('admins', joi.array().items(joi.string()).optional(), "Account administrators (uids)")
-.queryParam('members', joi.array().items(joi.string()).optional(), "Project members (uids)")
+.body( joi.object({
+  client: joi.string().required(),
+  id: joi.string().required(),
+  title: joi.string().optional().allow(''),
+  desc: joi.string().optional().allow(''),
+  admins: joi.array().items(joi.string()).optional(),
+  members: joi.array().items(joi.string()).optional()
+}),
+  "Client ID \
+  \nProject ID \
+  \nNew title \
+  \nDescription \
+  \nAccount Administrators (uids) \
+  \nProject members (uids)"
+)
 .summary('Update project information')
 .description('Update project information');
 
