@@ -183,19 +183,19 @@ router.get('/view', function (req, res) {
 .description('View specified query');
 
 
-router.get('/delete', function (req, res) {
+router.post('/delete', function (req, res) {
     try {
-        const client = g_lib.getUserFromClientID( req.queryParams.client );
+        const client = g_lib.getUserFromClientID( req.body.client );
         var owner;
 
-        for ( var i in req.queryParams.ids ){
-            if ( !req.queryParams.ids[i].startsWith( "q/" )){
-                throw [ g_lib.ERR_INVALID_PARAM, "Invalid query ID '" + req.queryParams.ids[i] + "'."];
+        for ( var i in req.body.ids ){
+            if ( !req.body.ids[i].startsWith( "q/" )){
+                throw [ g_lib.ERR_INVALID_PARAM, "Invalid query ID '" + req.body.ids[i] + "'."];
             }
 
-            owner = g_db.owner.firstExample({ _from: req.queryParams.ids[i] });
+            owner = g_db.owner.firstExample({ _from: req.body.ids[i] });
             if ( !owner ){
-                throw [ g_lib.ERR_NOT_FOUND, "Query '" + req.queryParams.ids[i] + "' not found."];
+                throw [ g_lib.ERR_NOT_FOUND, "Query '" + req.body.ids[i] + "' not found."];
             }
 
             if ( client._id != owner._to && !client.is_admin ) {
@@ -208,8 +208,13 @@ router.get('/delete', function (req, res) {
         g_lib.handleException( e, res );
     }
 })
-.queryParam('client', joi.string().required(), "Client ID")
-.queryParam('ids', joi.array().items(joi.string()).required(), "Query IDs")
+.body( joi.object({
+  client: joi.string().required(),
+  ids: joi.array().items(joi.string()).required()
+}),
+  "Client ID \
+  \nQuery IDs"
+)
 .summary('Delete specified query')
 .description('Delete specified query');
 
