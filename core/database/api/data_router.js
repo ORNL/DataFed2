@@ -1021,9 +1021,9 @@ router.get('/dep/graph/get', function (req, res) {
 .description('Get data dependency graph');
 
 
-router.get('/lock', function (req, res) {
+router.post('/lock', function (req, res) {
     try {
-        const client = g_lib.getUserFromClientID( req.queryParams.client );
+        const client = g_lib.getUserFromClientID( req.body.client );
         g_db._executeTransaction({
             collections: {
                 read: ["u","uuid","accn","a","alias"],
@@ -1031,15 +1031,15 @@ router.get('/lock', function (req, res) {
             },
             action: function() {
                 var obj,i,result=[];
-                for ( i in req.queryParams.ids ){
-                    obj = g_lib.getObject( req.queryParams.ids[i], client );
+                for ( i in req.body.ids ){
+                    obj = g_lib.getObject( req.body.ids[i], client );
 
                     if ( !g_lib.hasAdminPermObject( client, obj._id )) {
                         if ( !g_lib.hasPermissions( client, obj, g_lib.PERM_LOCK ))
                             throw g_lib.ERR_PERM_DENIED;
                     }
-                    g_db._update( obj._id, {locked:req.queryParams.lock}, { returnNew: true });
-                    result.push({id:obj._id,alias:obj.alias,title:obj.title,owner:obj.owner,locked:req.queryParams.lock});
+                    g_db._update( obj._id, {locked:req.body.lock}, { returnNew: true });
+                    result.push({id:obj._id,alias:obj.alias,title:obj.title,owner:obj.owner,locked:req.body.lock});
                 }
                 res.send(result);
             }
@@ -1048,12 +1048,17 @@ router.get('/lock', function (req, res) {
         g_lib.handleException( e, res );
     }
 })
-.queryParam('client', joi.string().optional(), "Client ID")
-.queryParam('ids', joi.array().items(joi.string()).required(), "Array of data IDs or aliases")
-.queryParam('lock',joi.bool().required(),"Lock (true) or unlock (false) flag")
+.body( joi.object({
+  client: joi.string().optional(),
+  ids: joi.array().items(joi.string()).required(),
+  lock: joi.bool().required()
+}), 
+  "Client ID \
+  \nArray of data IDs or aliases \
+  \nLock (true) or unlck (false) flag"
+)
 .summary('Toggle data record lock')
 .description('Toggle data record lock');
-
 
 
 /** @brief Get raw data path for local direct access, if possible from specified domain
