@@ -289,13 +289,13 @@ router.get('/delete', function (req, res) {
  * regardless of how many places it is linked. Used for pre-processing
  * data move operations (change alloc or owner).
  */
-router.get('/calc_size', function (req, res) {
-    g_lib.getUserFromClientID( req.queryParams.client );
+router.post('/calc_size', function (req, res) {
+    g_lib.getUserFromClientID( req.body.client );
 
     // TODO Check permissions
     var i, repo_map = {};
-    for ( i in req.queryParams.items ){
-        calcSize( req.queryParams.items[i], req.queryParams.recurse, 0, {}, repo_map );
+    for ( i in req.body.items ){
+        calcSize( req.body.items[i], req.body.recurse, 0, {}, repo_map );
     }
 
     var result = [], stats;
@@ -307,9 +307,15 @@ router.get('/calc_size', function (req, res) {
 
     res.send( result );
 })
-.queryParam('client', joi.string().required(), "Client ID")
-.queryParam('items', joi.array().items(joi.string()).required(), "Array of data and/or collection IDs")
-.queryParam('recurse', joi.boolean().required(), "Recursive flag")
+.body( joi.object({
+  client: joi.string().required(),
+  items: joi.array().items(joi.string()).required(),
+  recurse: joi.boolean().required()
+}),
+  "Client ID \
+  \nArray of data and/or collection IDs \
+  \nRecursive flag"
+)
 .summary('Calculate per-repo sizes for specified data records and collections.')
 .description('Calculate per-repo sizes for specified data records and collections.');
 
