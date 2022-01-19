@@ -190,34 +190,34 @@ router.post('/delete', function (req, res) {
 .description('Delete an existing finalized task record.');
 
 
-router.get('/list', function (req, res) {
+router.post('/list', function (req, res) {
     try{
-        const client = g_lib.getUserFromClientID( req.queryParams.client );
+        const client = g_lib.getUserFromClientID( req.body.client );
 
         var params = {client: client._id};
         var qry = "for i in task filter i.client == @client";
 
-        if ( req.queryParams.since ) {
-            qry += " and i.ut >= " + ((Date.now()/1000) - req.queryParams.since);
+        if ( req.body.since ) {
+            qry += " and i.ut >= " + ((Date.now()/1000) - req.body.since);
         }else{
-            if ( req.queryParams.from != undefined ) {
-                qry += " and i.ut >= " + req.queryParams.from;
+            if ( req.body.from != undefined ) {
+                qry += " and i.ut >= " + req.body.from;
             }
 
-            if ( req.queryParams.to != undefined ) {
-                qry += " and i.ut <= " + req.queryParams.to;
+            if ( req.body.to != undefined ) {
+                qry += " and i.ut <= " + req.body.to;
             }
         }
 
-        if ( req.queryParams.status ){
+        if ( req.body.status ){
             qry += " and i.status in @status";
-            params.status =  req.queryParams.status;
+            params.status =  req.body.status;
         }
 
         qry += " sort i.ut desc";
 
-        if ( req.queryParams.offset != undefined && req.queryParams.count != undefined ){
-            qry += " limit " + req.queryParams.offset + ", " + req.queryParams.count;
+        if ( req.body.offset != undefined && req.body.count != undefined ){
+            qry += " limit " + req.body.offset + ", " + req.body.count;
         }
 
         qry += " return i";
@@ -229,13 +229,23 @@ router.get('/list', function (req, res) {
         g_lib.handleException( e, res );
     }
 })
-.queryParam('client', joi.string().required(), "Client ID")
-.queryParam('status', joi.array().items(joi.number().integer()).optional(), "List of task states to retrieve.")
-.queryParam('since', joi.number().integer().min(0).optional(), "List tasks updated since this many seconds ago.")
-.queryParam('from', joi.number().integer().min(0).optional(), "List tasks from this timestamp.")
-.queryParam('to', joi.number().integer().min(0).optional(), "List tasks to this timestamp.")
-.queryParam('offset', joi.number().integer().min(0).optional(), "Offset")
-.queryParam('count', joi.number().integer().min(0).optional(), "Count")
+.body( joi.object({
+  client: joi.string().required(),
+  status: joi.array().items(joi.number().integer()).optional(),
+  since: joi.number().integer().min(0).optional(),
+  from: joi.number().integer().min(0).optional(),
+  to: joi.number().integer().min(0).optional(),
+  offset: joi.number().integer().min(0).optional(),
+  count: joi.number().integer().min(0).optional()
+}),
+  "Client ID \
+  \nList of task states to retrive. \
+  \nList tasks updated since this many seconds ago. \
+  \nList tasks from this timestamp. \
+  \nList tasks to this timestamp. \
+  \nOffset \
+  \nCount"
+)
 .summary('List task records')
 .description('List task records.');
 
