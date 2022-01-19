@@ -422,7 +422,7 @@ router.get('/read', function (req, res) {
 .description('Read contents of a collection by ID or alias');
 
 
-router.get('/write', function (req, res) {
+router.post('/write', function (req, res) {
     try {
         g_db._executeTransaction({
             collections: {
@@ -430,20 +430,20 @@ router.get('/write', function (req, res) {
                 write: ["item","d"]
             },
             action: function() {
-                const client = g_lib.getUserFromClientID( req.queryParams.client );
+                const client = g_lib.getUserFromClientID( req.body.client );
 
-                if ( req.queryParams.add && req.queryParams.remove ){
+                if ( req.body.add && req.body.remove ){
                     throw [g_lib.ERR_INVALID_PARAM,"Cannot add and remove collection items at the same time."];
                 }
 
-                var coll_id = g_lib.resolveCollID( req.queryParams.id, client );
+                var coll_id = g_lib.resolveCollID( req.body.id, client );
                 var coll = g_db.c.document( coll_id );
                 var owner_id = g_db.owner.firstExample({ _from: coll_id })._to;
                 var chk_perm = false;
 
                 if ( !g_lib.hasAdminPermObject( client, coll_id )) {
                     var req_perm = g_lib.PERM_LINK;
-                    //if ( req.queryParams.remove && req.queryParams.remove.length )
+                    //if ( req.body.remove && req.body.remove.length )
                     //    req_perm |= g_lib.PERM_SHARE;
                     if ( !g_lib.hasPermissions( client, coll, req_perm, true ))
                         throw [g_lib.ERR_PERM_DENIED,"Permission denied - requires LINK on collection."];
@@ -465,11 +465,11 @@ router.get('/write', function (req, res) {
                 // 6. Collections can only be linked to one parent
                 // 7. All records and collections must have at least one parent (except root)
 
-                if ( req.queryParams.remove ) {
+                if ( req.body.remove ) {
                     loose = {};
 
-                    for ( i in req.queryParams.remove ) {
-                        obj = g_lib.getObject( req.queryParams.remove[i], client );
+                    for ( i in req.body.remove ) {
+                        obj = g_lib.getObject( req.body.remove[i], client );
 
                         if ( !g_db.item.firstExample({ _from: coll_id, _to: obj._id }))
                             throw [g_lib.ERR_UNLINK,obj._id+" is not in collection " + coll_id];
@@ -498,18 +498,18 @@ router.get('/write', function (req, res) {
                     }
                 }
 
-                if ( req.queryParams.add ) {
+                if ( req.body.add ) {
                     // Limit number of items in collection
                     cres = g_db._query("for v in 1..1 outbound @coll item return v._id",{coll:coll_id});
                     //console.log("coll item count:",cres.count());
-                    if ( cres.count() + req.queryParams.add.length > g_lib.MAX_COLL_ITEMS )
+                    if ( cres.count() + req.body.add.length > g_lib.MAX_COLL_ITEMS )
                         throw [g_lib.ERR_INPUT_TOO_LONG,"Collection item limit exceeded (" + g_lib.MAX_COLL_ITEMS + " items)" ];
 
                     cres.dispose();
 
-                    for ( i in req.queryParams.add ) {
+                    for ( i in req.body.add ) {
 
-                        obj = g_lib.getObject( req.queryParams.add[i], client );
+                        obj = g_lib.getObject( req.body.add[i], client );
 
                         // Check if item is already in this collection
                         if ( g_db.item.firstExample({ _from: coll_id, _to: obj._id }))
@@ -566,7 +566,7 @@ router.get('/write', function (req, res) {
 
                     cres = g_db._query("for v in 1..1 outbound @coll item return v._id",{coll:root_id});
 
-                    if ( cres.count() + (req.queryParams.add?req.queryParams.add.length:0) > g_lib.MAX_COLL_ITEMS )
+                    if ( cres.count() + (req.body.add?req.body.add.length:0) > g_lib.MAX_COLL_ITEMS )
                         throw [g_lib.ERR_INPUT_TOO_LONG,"Root collection item limit exceeded (" + g_lib.MAX_COLL_ITEMS + " items)" ];
 
                     cres.dispose();
@@ -602,14 +602,21 @@ router.get('/write', function (req, res) {
         g_lib.handleException( e, res );
     }
 })
-.queryParam('client', joi.string().required(), "Client ID")
-.queryParam('id', joi.string().required(), "Collection ID or alias to modify")
-.queryParam('add', joi.array().items(joi.string()).optional(), "Array of item IDs to add")
-.queryParam('remove', joi.array().items(joi.string()).optional(), "Array of item IDs to remove")
+.body( joi.object({
+  client: joi.string().required(),
+  id: joi.string().required(),
+  add: joi.array().items(joi.string()).optional(),
+  remove: joi.array().items(joi.string()).optional()
+}),
+  "Client ID \
+  \nCollection ID or alias to modify \
+  \nArray of item IDs to add \
+  \nArray of item IDs to remove"
+)
 .summary('Add/remove items in a collection')
 .description('Add/remove items in a collection');
 
-router.get('/move', function (req, res) {
+router.post('/move', function (req, res) {
     try {
         g_db._executeTransaction({
             collections: {
@@ -617,10 +624,10 @@ router.get('/move', function (req, res) {
                 write: ["item","d"]
             },
             action: function() {
-                const client = g_lib.getUserFromClientID( req.queryParams.client );
-                var src_id = g_lib.resolveCollID( req.queryParams.source, client ),
+                const client = g_lib.getUserFromClientID( req.body.client );
+                var src_id = g_lib.resolveCollID( req.body.source, client ),
                     src = g_db.c.document( src_id ),
-                    dst_id = g_lib.resolveCollID( req.queryParams.dest, client ),
+                    dst_id = g_lib.resolveCollID( req.body.dest, client ),
                     dst = g_db.c.document( dst_id ),
                     visited = {},
                     src_ctx = g_lib.catalogCalcParCtxt( src, visited ),
@@ -628,7 +635,7 @@ router.get('/move', function (req, res) {
                     is_pub = src_ctx.pub | dst_ctx.pub;
 
                 if ( src.owner != dst.owner )
-                    throw [g_lib.ERR_LINK,req.queryParams.source+" and "+req.queryParams.dest+" have different owners"];
+                    throw [g_lib.ERR_LINK,req.body.source+" and "+req.body.dest+" have different owners"];
 
                 var chk_perm = false,
                     src_perms = 0,
@@ -652,9 +659,9 @@ router.get('/move', function (req, res) {
 
                 var i,item;
 
-                for ( i in req.queryParams.items ) {
+                for ( i in req.body.items ) {
                     // TODO - should aliases be resolved with client or owner ID?
-                    item = g_lib.getObject( req.queryParams.items[i], client );
+                    item = g_lib.getObject( req.body.items[i], client );
 
                     if ( item.is_root )
                         throw [g_lib.ERR_LINK,"Cannot link root collection"];
@@ -706,10 +713,17 @@ router.get('/move', function (req, res) {
         g_lib.handleException( e, res );
     }
 })
-.queryParam('client', joi.string().required(), "Client ID")
-.queryParam('items', joi.array().items(joi.string()).optional(), "Items IDs/aliases to move")
-.queryParam('source', joi.string().required(), "Source collection ID/alias" )
-.queryParam('dest', joi.string().required(), "Destination collection ID/alias" )
+.body( joi.object({
+  client: joi.string().required(),
+  items: joi.array().items(joi.string().optional()),
+  source: joi.string().required(),
+  dest: joi.string().required()
+}),
+  "Client ID \
+  \nItems IDs/aliases to move \
+  \nSource collection ID/alias \
+  \nDestination collection ID/alias"
+)
 .summary('Move items from source collection to destination collection')
 .description('Move items from source collection to destination collection');
 
