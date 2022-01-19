@@ -13,7 +13,7 @@ module.exports = router;
 
 //========== GROUP API FUNCTIONS ==========
 
-router.get('/create', function (req, res) {
+router.post('/create', function (req, res) {
     try {
         var result = [];
 
@@ -23,24 +23,24 @@ router.get('/create', function (req, res) {
                 write: ["g","owner","member"]
             },
             action: function() {
-                const client = g_lib.getUserFromClientID( req.queryParams.client );
+                const client = g_lib.getUserFromClientID( req.body.client );
                 var uid;
 
-                if ( req.queryParams.proj ) {
-                    uid = req.queryParams.proj;
+                if ( req.body.proj ) {
+                    uid = req.body.proj;
                     g_lib.ensureManagerPermProj( client, uid );
                 } else {
                     uid = client._id;
                 }
 
-                if ( req.queryParams.gid == "members" )
+                if ( req.body.gid == "members" )
                     throw [g_lib.ERR_PERM_DENIED,"Group ID 'members' is reserved"];
 
                 var obj = { uid: uid };
 
-                g_lib.procInputParam( req.queryParams, "gid", false, obj );
-                g_lib.procInputParam( req.queryParams, "title", false, obj );
-                g_lib.procInputParam( req.queryParams, "summary", false, obj );
+                g_lib.procInputParam( req.body, "gid", false, obj );
+                g_lib.procInputParam( req.body, "title", false, obj );
+                g_lib.procInputParam( req.body, "summary", false, obj );
 
                 if ( g_db.g.firstExample({ uid: uid, gid: obj.gid }))
                     throw [g_lib.ERR_IN_USE,"Group ID '"+obj.gid+"' already exists."];
@@ -49,11 +49,11 @@ router.get('/create', function (req, res) {
 
                 g_db.owner.save({ _from: group._id, _to: uid });
 
-                if ( req.queryParams.members ) {
-                    group.new.members = req.queryParams.members;
+                if ( req.body.members ) {
+                    group.new.members = req.body.members;
                     var mem;
-                    for ( var i in req.queryParams.members ) {
-                        mem = req.queryParams.members[i];
+                    for ( var i in req.body.members ) {
+                        mem = req.body.members[i];
                         if ( !g_db._exists( mem ))
                             throw [g_lib.ERR_NOT_FOUND,"User, "+mem+", not found"];
 
@@ -76,17 +76,26 @@ router.get('/create', function (req, res) {
         g_lib.handleException( e, res );
     }
 })
-.queryParam('client', joi.string().required(), "Client ID")
-.queryParam('proj', joi.string().optional(), "Project ID (optional)")
-.queryParam('gid', joi.string().required(), "Group ID")
-.queryParam('title', joi.string().optional().allow(""), "Title")
-.queryParam('desc', joi.string().optional().allow(""), "Description")
-.queryParam('members', joi.array().items(joi.string()).optional(), "Array of member UIDs")
+.body( joi.object({
+  client: joi.string().required(),
+  proj: joi.string().optional(),
+  gid: joi.string().required(),
+  title: joi.string().optional().allow(""),
+  desc: joi.string().optional().allow(""),
+  members: joi.array().items(joi.string()).optional()
+}),
+  "Client ID \
+   \nProject ID (optional) \
+   \nGroup ID \
+   \nTitle \
+   \nDescription \
+   \nArray of member UIDs"
+)
 .summary('Creates a new group')
 .description('Creates a new group owned by client (or project), with optional members');
 
 
-router.get('/update', function (req, res) {
+router.post('/update', function (req, res) {
     try {
         var result = [];
 
@@ -96,29 +105,29 @@ router.get('/update', function (req, res) {
                 write: ["g","owner","member"]
             },
             action: function() {
-                const client = g_lib.getUserFromClientID( req.queryParams.client );
+                const client = g_lib.getUserFromClientID( req.body.client );
                 var group;
 
-                if ( req.queryParams.proj ) {
-                    var uid = req.queryParams.proj;
-                    group = g_db.g.firstExample({ uid: uid, gid: req.queryParams.gid });
+                if ( req.body.proj ) {
+                    var uid = req.body.proj;
+                    group = g_db.g.firstExample({ uid: uid, gid: req.body.gid });
                     if ( !group )
-                        throw [g_lib.ERR_NOT_FOUND,"Group ID '"+req.queryParams.gid+"' not found"];
+                        throw [g_lib.ERR_NOT_FOUND,"Group ID '"+req.body.gid+"' not found"];
 
                     //g_lib.ensureAdminPermObject( client, group._id );
                     g_lib.ensureManagerPermProj( client, uid );
                 } else {
-                    group = g_db.g.firstExample({ uid: client._id, gid: req.queryParams.gid });
+                    group = g_db.g.firstExample({ uid: client._id, gid: req.body.gid });
                     if ( !group )
-                        throw [g_lib.ERR_NOT_FOUND,"Group ID '"+req.queryParams.gid+"' not found"];
+                        throw [g_lib.ERR_NOT_FOUND,"Group ID '"+req.body.gid+"' not found"];
                 }
 
                 var obj = {};
 
                 if ( group.gid != "members" ) {
-                    //g_lib.procInputParam( req.queryParams, "gid", false, obj );
-                    g_lib.procInputParam( req.queryParams, "title", true, obj );
-                    g_lib.procInputParam( req.queryParams, "desc", true, obj );
+                    //g_lib.procInputParam( req.body, "gid", false, obj );
+                    g_lib.procInputParam( req.body, "title", true, obj );
+                    g_lib.procInputParam( req.body, "desc", true, obj );
 
                     group = g_db._update( group._id, obj, { keepNull:false, returnNew: true });
                     group = group.new;
@@ -126,9 +135,9 @@ router.get('/update', function (req, res) {
 
                 var mem,i;
 
-                if ( req.queryParams.add ) {
-                    for ( i in req.queryParams.add ) {
-                        mem = req.queryParams.add[i];
+                if ( req.body.add ) {
+                    for ( i in req.body.add ) {
+                        mem = req.body.add[i];
 
                         if ( !g_db._exists( mem ))
                             throw [g_lib.ERR_NOT_FOUND,"User, "+mem+", not found"];
@@ -138,11 +147,11 @@ router.get('/update', function (req, res) {
                     }
                 }
 
-                if ( req.queryParams.rem ) {
+                if ( req.body.rem ) {
                     var edge;
 
-                    for ( i in req.queryParams.rem ) {
-                        mem = req.queryParams.rem[i];
+                    for ( i in req.body.rem ) {
+                        mem = req.body.rem[i];
 
                         edge = g_db.member.firstExample({ _from: group._id, _to: mem  });
                         if ( edge )
@@ -165,13 +174,23 @@ router.get('/update', function (req, res) {
         g_lib.handleException( e, res );
     }
 })
-.queryParam('client', joi.string().required(), "Client ID")
-.queryParam('proj', joi.string().optional(), "Project ID")
-.queryParam('gid', joi.string().required(), "Group ID")
-.queryParam('title', joi.string().allow('').optional(), "New title")
-.queryParam('desc', joi.string().allow('').optional(), "New description")
-.queryParam('add', joi.array().items(joi.string()).optional(), "Array of member UIDs to add to group")
-.queryParam('rem', joi.array().items(joi.string()).optional(), "Array of member UIDs to remove from group")
+.body( joi.object({
+  client: joi.string().required(),
+  proj: joi.string().optional(),
+  gid: joi.string().required(),
+  title: joi.string().allow('').optional(),
+  desc: joi.string().allow('').optional(),
+  add: joi.array().items(joi.string()).optional(),
+  rem: joi.array().items(joi.string()).optional()
+}),
+  "Client ID \
+  \nProject ID \
+  \nGroup ID \
+  \nNew title \
+  \nNew description \
+  \nArray of member IDs to add to group \
+  \nArray of member IDs to remove from group"
+)
 .summary('Updates an existing group')
 .description('Updates an existing group owned by client (or project).');
 
