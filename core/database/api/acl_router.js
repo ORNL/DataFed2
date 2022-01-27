@@ -137,7 +137,11 @@ router.post('/update', function (req, res) {
 }),
   "Client ID \
   \nID or alias of data record or collection \
-  \nUser and /or group ACL rules to create"
+  \nUser and /or group ACL rules to create \
+  \nid - ? \
+  \ngrant - bitmask of the permissions and applies to the rule subject \
+  \ninhgrant - same as grant but only applies to collections and stands for \
+  rules that are inherited."
 )
 .summary('Update ACL(s) on a data record or collection')
 .description('Update access control list(s) (ACLs) on a data record or collection. Inherited permissions can only be set on collections.');
