@@ -1,21 +1,26 @@
-# Will install foxx
+#!/bin/bash
+
+# This script will be used to install foxx from scratch. That is assuming the
+# "sdms" database does not exist. If it does it exist it will first be removed
+# before the script proceeds to recreate it and intall Foxx.
+# In this way it is idempotent.
 
 current_dir=$(dirname "$0")
 cd ${current_dir}/../database
 pwd
 touch passwd
 
-# Create the sdms database using HTTP, not sure how to do this from foxx because
-# We cannot mount a foxx service without the database existing as far as I know.
 
 # Step 1 list existing databases
 response=$(curl -X GET -u root:"" --header 'accept: application/json'  http://172.22.1.206:8529/_api/database)
 databases=$(echo $response | jq '.result | .[]')
 for word in ${databases}
 do
+  # If the "sdms" database exists drop it because we want to start clean
   if [[ $word == *"sdms"* ]]
   then
-    # If it exists drop it because we want to start clean
+    # Create the sdms database using HTTP, not sure how to do this from foxx because
+    # We cannot mount a foxx service without the database existing as far as I know.
     response=$(curl -X DELETE -u root:"" --header 'accept: application/json'  http://172.22.1.206:8529/_api/database/sdms)
   fi
 done
