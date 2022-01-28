@@ -1,0 +1,9 @@
+{
+  "error": false,
+  "code": 200,
+  "result": [
+    "_system",
+    "arango_client_db",
+    "sdms"
+  ]
+}
