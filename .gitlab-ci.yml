@@ -1,10 +1,10 @@
 
 stages:
-  - build
-  - unit-test
-  - deploy-docker
   - setup-core-vm
-  - test-end-to-end
+#  - build
+#  - unit-test
+#  - deploy-docker
+#  - test-end-to-end
 
 build-code:
   stage: build
