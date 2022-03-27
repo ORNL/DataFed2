@@ -12,7 +12,7 @@ build-code:
     - bazel build //src:hello-world
 
 
- # Anchor used to make code DRY runs and builds with Terraform the following env variables must be defined
+# Anchor used to make code DRY runs and builds with Terraform the following env variables must be defined
 # STATE_DIR - which folder in datafed2/Terraform is being run
 # STEP_FILE - the name of the temporary step file, this is used so that we can log into the vm and recreate
 #             the environment if needed
@@ -45,7 +45,7 @@ setup-core-vm:
   tags:
     - datafed2
   script:
-    - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.instance/group/project.git
+    - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@code.ornl.gov/8f4/datafedci.git
     - *terraform-build
   artifacts:
     name: "$PLAN_ARTIFACT_NAME"
