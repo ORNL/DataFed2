@@ -45,7 +45,7 @@ setup-core-vm:
   tags:
     - datafed2
   script:
-    - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@code.ornl.gov/8f4/datafedci.git
+    - git clone https://${datafedci_username}:${datafedci_access_token}@code.ornl.gov/8f4/datafedci.git
     - *terraform-build
   artifacts:
     name: "$PLAN_ARTIFACT_NAME"
