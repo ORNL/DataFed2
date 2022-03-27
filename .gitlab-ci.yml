@@ -6,11 +6,11 @@ stages:
 #  - deploy-docker
 #  - test-end-to-end
 
-build-code:
-  stage: build
-  script:
-    - bazel build //src:hello-world
-
+#build-code:
+#  stage: build
+#  script:
+#    - bazel build //src:hello-world
+#
 
 # Anchor used to make code DRY runs and builds with Terraform the following env variables must be defined
 # STATE_DIR - which folder in datafed2/Terraform is being run
