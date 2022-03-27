@@ -25,7 +25,7 @@ stages:
     echo "set -euf -o pipefail" >> "${STATE_DIR}/${STEP_FILE}"
     echo "${CI_PROJECT_DIR}/scripts/create_terraform_backend_config.sh ${CONFIG_PROJECT_ID} ${TERRAFORM_STATE} ${OS_USERNAME} ${CONFIG_ACCESS_TOKEN} ${TERRAFORM_BACKEND_CONFIG_FILE}" >> "${STATE_DIR}/${STEP_FILE}"
     chmod +x "${STATE_DIR}/$STEP_FILE"
-    ./$STEP_FILE
+    ${STATE_DIR}/$STEP_FILE
     terraform init -backend-config "${STATE_DIR}/${TERRAFORM_BACKEND_CONFIG_FILE}" -reconfigure
     terraform plan -out="${STATE_DIR}/$PLAN_ARTIFACT_NAME"
     terraform apply "${STATE_DIR}/$PLAN_ARTIFACT_NAME"
