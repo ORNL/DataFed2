@@ -1,0 +1,55 @@
+
+stages:
+  - setup-core-vm
+#  - build
+#  - unit-test
+#  - deploy-docker
+#  - test-end-to-end
+
+build-code:
+  stage: build
+  script:
+    - bazel build //src:hello-world
+
+
+ # Anchor used to make code DRY runs and builds with Terraform the following env variables must be defined
+# STATE_DIR - which folder in datafed2/Terraform is being run
+# STEP_FILE - the name of the temporary step file, this is used so that we can log into the vm and recreate
+#             the environment if needed
+# TERRAFORM_BACKEND_CONFIG_FILE - the name of the config file that contains the settings relevant to using 
+#                                 the open stack backend
+# PLAN_ARTIFACT_NAME - the name of the terraform plan which will be saved as an artifact
+.terraform-build: &terraform-build
+  - |
+    echo "#!/usr/bin/env bash" > "${STATE_DIR}/${STEP_FILE}"
+    echo "set -euf -o pipefail" >> "${STATE_DIR}/${STEP_FILE}"
+    echo "${CI_PROJECT_DIR}/scripts/create_terraform_backend_config.sh ${CONFIG_PROJECT_ID} ${TERRAFORM_STATE} ${OS_USERNAME} ${CONFIG_ACCESS_TOKEN} ${TERRAFORM_BACKEND_CONFIG_FILE}" >> "${STATE_DIR}/${STEP_FILE}"
+    chmod +x "${STATE_DIR}/$STEP_FILE"
+    ./$STEP_FILE
+    terraform init -backend-config "${STATE_DIR}/${TERRAFORM_BACKEND_CONFIG_FILE}" -reconfigure
+    terraform plan -out="${STATE_DIR}/$PLAN_ARTIFACT_NAME"
+    terraform apply "${STATE_DIR}/$PLAN_ARTIFACT_NAME"
+
+
+# Plan Stage
+setup-core-vm:
+  stage: setup-core-vm
+  variables:
+    TF_IMAGE: "registry.gitlab.com/gitlab-org/terraform-images/stable:latest"
+    TERRAFORM_STATE: "terraform-datafed-core-state"
+    TERRAFORM_BACKEND_CONFIG_FILE: "backend-datafed-core.config"
+    GIT_STRATEGY: clone
+    STEP_FILE: "step1.sh"
+    STATE_DIR: "${CI_PROJECT_DIR}/datafedci/Terraform/DataFedCore"
+    PLAN_ARTIFACT_NAME: shared_resource.plan
+  tags:
+    - datafed2
+  script:
+    - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.instance/group/project.git
+    - *terraform-build
+  artifacts:
+    name: "$PLAN_ARTIFACT_NAME"
+    paths:
+      - "${STATE_DIR}/$PLAN_ARTIFACT_NAME"
+
+ 
