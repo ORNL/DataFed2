@@ -25,9 +25,9 @@ stages:
     echo "${CI_PROJECT_DIR}/datafedci/scripts/create_terraform_backend_config.sh ${CONFIG_PROJECT_ID} ${TERRAFORM_STATE} ${OS_USERNAME} ${CONFIG_ACCESS_TOKEN} ${STATE_DIR}/${TERRAFORM_BACKEND_CONFIG_FILE}" >> "${STATE_DIR}/${STEP_FILE}"
     chmod +x "${STATE_DIR}/$STEP_FILE"
     ${STATE_DIR}/$STEP_FILE
-    terraform init -backend-config "${STATE_DIR}/${TERRAFORM_BACKEND_CONFIG_FILE}" -reconfigure
-    terraform plan -out="${STATE_DIR}/$PLAN_ARTIFACT_NAME"
-    terraform apply "${STATE_DIR}/$PLAN_ARTIFACT_NAME"
+    terraform init -chdir=${STATE_DIR} -backend-config "${STATE_DIR}/${TERRAFORM_BACKEND_CONFIG_FILE}" -reconfigure
+    terraform plan -chdir=${STATE_DIR} -out="${STATE_DIR}/$PLAN_ARTIFACT_NAME"
+    terraform apply -chdir=${STATE_DIR} "${STATE_DIR}/$PLAN_ARTIFACT_NAME"
 
 # Plan Stage
 setup-core-vm:
