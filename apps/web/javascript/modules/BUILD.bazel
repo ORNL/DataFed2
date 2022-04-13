@@ -1,0 +1,7 @@
+
+filegroup(
+    name = "calculator",
+    srcs = ["calculator.js"],
+    visibility = ["//apps/web/javascript:__pkg__","//apps/web/javascript/tests:__pkg__"],
+)
+

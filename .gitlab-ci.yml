@@ -1,5 +1,7 @@
 
 stages:
+  - build
+  - unit-test
   - setup-core-vm
 
 # Anchor used to make code DRY runs and builds with Terraform.
@@ -29,7 +31,21 @@ stages:
     terraform -chdir=${STATE_DIR} plan -out="${STATE_DIR}/$PLAN_ARTIFACT_NAME"
     terraform -chdir=${STATE_DIR} apply "${STATE_DIR}/$PLAN_ARTIFACT_NAME"
 
-# Plan Stage
+build-DataFed2:
+  stage: build
+  tags:
+    - datafed2
+  script:
+    - bazel build ...
+
+unit-test-DataFed2:
+  stage: unit-test
+  tags:
+    - datafed2
+  script:
+    - bazel test ...
+
+# Set up the Core VM where DataFed workers and Queue will run
 setup-core-vm:
   stage: setup-core-vm
   variables:

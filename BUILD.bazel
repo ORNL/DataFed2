@@ -1,0 +1,22 @@
+load("@rules_foreign_cc//foreign_cc:defs.bzl", "cmake", "configure_make")
+
+cmake(
+    name = "poco",
+    lib_source = "@poco//:all_srcs",
+    build_args = ["-j 8"],
+    out_shared_libs = ["libPocoNet.so","libPocoJSON.so","libPocoRedis.so","libPocoXML.so","libPocoZip.so","libPocoData.so","libPocoEncodings.so","libPocoDataSQLite.so","libPocoFoundation.so","libPocoUtil.so"],
+    visibility = ["//visibility:public"],
+    install = True,
+)
+
+configure_make(
+    name = "openssl",
+    lib_source = "@openssl//:all_srcs",
+    out_shared_libs = ["libssl.so","libcrypto.so"],
+    visibility = ["//visibility:public"],
+    configure_command = "Configure",
+    configure_options = ["-fPIC","-shared"],
+    configure_in_place = True,
+    out_lib_dir = "lib64",
+    args = ["-j 8"],
+)

@@ -1,0 +1,25 @@
+# Set up local cache
+build --disk_cache=~/.cache/bazel-disk
+fetch --disk_cache=~/.cache/bazel-disk
+query --disk_cache=~/.cache/bazel-disk
+sync --disk_cache=~/.cache/bazel-disk
+test --disk_cache=~/.cache/bazel-disk
+
+# Specify the V++ version
+build --cxxopt='-std=c++14'
+
+# Ensure that tests output errors when encountered instead of placing
+# all output in a log file.
+test --test_output=errors
+
+# Reduce Bazel run output so it is less noisy
+run --ui_event_filters=-DEBUG, -INFO, -stderr --noshow_progress
+
+# Use custon configured c++ toolchain
+build:clang_config --crosstool_top=//toolchain:clang_suite
+
+# Use --cpu as a differentiator
+build:clang_config --cpu=k8
+
+# Use the default Bazel C++ toolchain to build the tools used during the build
+build:clang_config --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
