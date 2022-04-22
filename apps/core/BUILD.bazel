@@ -1,0 +1,32 @@
+
+# We can confine the visibility to individual targets if we desire, by 
+# specifying the folder containint the BUILD.baze file where the target
+# is located i.e.
+# 
+# visibility = ["//cpp:__pkg__"],
+
+cc_binary(
+    name = "cpp-placeholder",
+    srcs = ["placeholder_src/placeholder.cpp"],
+    deps = [
+        "//common/libs/placeholder_cpp_library:mytest_lib"
+    ],
+)
+
+cc_binary(
+    name = "openssl_placeholder",
+    srcs = ["placeholder_src/openssl_placeholder.cpp"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//:openssl",
+    ],
+)
+
+cc_binary(
+    name = "poco_placeholder",
+    srcs = ["placeholder_src/poco_placeholder.cpp"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//:poco",
+    ],
+)

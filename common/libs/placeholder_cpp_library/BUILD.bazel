@@ -1,0 +1,25 @@
+
+# We can confine the visibility to individual targets if we desire, by 
+# specifying the folder containint the BUILD.baze file where the target
+# is located i.e.
+# 
+# visibility = ["//cpp:__pkg__"],
+cc_library(
+    name = "mytest_lib",
+    srcs = ["src/placeholder_library.cpp"],
+    includes = ["include"],
+    hdrs = ["include/mytest/placeholder_library.hpp"],
+    visibility = ["//visibility:public"],
+    strip_include_prefix = "include",
+)
+
+# @boost//:test.a  - statically linked
+# @boost//:test.so - dynamically linked 
+cc_test(
+    name = "mylib_test",
+    srcs = ["tests/unit/test_returnOne.cpp"],
+    deps = [
+        "@boost//:test.a",
+        ":mytest_lib",
+        ],
+)

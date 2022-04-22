@@ -1,0 +1,20 @@
+py_library(
+    name = "mypy_lib",
+    srcs = ["mypython/mypython.py"],
+    srcs_version = "PY3",
+    imports = ["."],
+)
+
+py_test(
+    name = "mypy_test",
+    srcs = ["tests/test_mypy.py"],
+    deps = [":mypy_lib"],
+    main = "tests/test_mypy.py"
+)
+
+py_binary(
+    name = "speak",
+    deps = [":mypy_lib"],
+    srcs = ["bin/mypython_exec.py"],
+    main = "bin/mypython_exec.py",
+)
