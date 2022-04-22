@@ -46,22 +46,22 @@ unit-test-DataFed2:
     - bazel test ...
 
 # Set up the Core VM where DataFed workers and Queue will run
-setup-core-vm:
-  stage: setup-core-vm
-  variables:
-    TF_IMAGE: "registry.gitlab.com/gitlab-org/terraform-images/stable:latest"
-    TERRAFORM_STATE: "terraform-datafed-core-state"
-    TERRAFORM_BACKEND_CONFIG_FILE: "backend-datafed-core.config"
-    GIT_STRATEGY: clone
-    STEP_FILE: "step1.sh"
-    STATE_DIR: "${CI_PROJECT_DIR}/datafedci/Terraform/DataFedCore"
-    PLAN_ARTIFACT_NAME: shared_resource.plan
-  tags:
-    - datafed2
-  script:
-    - git clone https://${datafedci_username}:${datafedci_access_token}@code.ornl.gov/8f4/datafedci.git
-    - *terraform-build
-  artifacts:
-    name: "$PLAN_ARTIFACT_NAME"
-    paths:
-      - "${STATE_DIR}/$PLAN_ARTIFACT_NAME"
+#setup-core-vm:
+#  stage: setup-core-vm
+#  variables:
+#    TF_IMAGE: "registry.gitlab.com/gitlab-org/terraform-images/stable:latest"
+#    TERRAFORM_STATE: "terraform-datafed-core-state"
+#    TERRAFORM_BACKEND_CONFIG_FILE: "backend-datafed-core.config"
+#    GIT_STRATEGY: clone
+#    STEP_FILE: "step1.sh"
+#    STATE_DIR: "${CI_PROJECT_DIR}/datafedci/Terraform/DataFedCore"
+#    PLAN_ARTIFACT_NAME: shared_resource.plan
+#  tags:
+#    - datafed2
+#  script:
+#    - git clone https://${datafedci_username}:${datafedci_access_token}@code.ornl.gov/8f4/datafedci.git
+#    - *terraform-build
+#  artifacts:
+#    name: "$PLAN_ARTIFACT_NAME"
+#    paths:
+#      - "${STATE_DIR}/$PLAN_ARTIFACT_NAME"
