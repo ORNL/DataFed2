@@ -1,0 +1,7 @@
+
+filegroup(
+    name = "api",
+    srcs = ["project.js","user.js"],
+    visibility = ["//apps/web/javascript/FastifyTemplate:__pkg__"],
+)
+
