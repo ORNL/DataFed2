@@ -1,0 +1,11 @@
+load("@build_bazel_rules_nodejs//:index.bzl", "nodejs_binary")
+
+nodejs_binary(
+    name = "fastify",
+    entry_point = ":server.js",
+    data = [
+        "//apps/web/javascript/FastifyTemplate/routes/api:api",
+        "@npm//express"
+    ]
+    
+)
