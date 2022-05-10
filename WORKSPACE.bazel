@@ -52,9 +52,20 @@ node_repositories(
     yarn_version = "1.5.1",
 )
 
+# Note: use_global_yarn_cache is set to false so that the two packages shown below
+# are kept separate and the installs can be interated independently
 yarn_install(
-    name = "npm",
-    package_json = "//apps/web/javascript:package.json",
-    yarn_lock = "//apps/web/javascript:yarn.lock",
-    frozen_lockfile = False,
+    name = "npm_placeholder",
+    package_json = "//apps/web/javascript/PlaceHolder:package.json",
+    yarn_lock = "//apps/web/javascript/PlaceHolder:yarn.lock",
+    use_global_yarn_cache = False,
+    frozen_lockfile = True,
+)
+
+yarn_install(
+    name = "npm_fastify",
+    package_json = "//apps/web/javascript/FastifyTemplate:package.json",
+    yarn_lock = "//apps/web/javascript/FastifyTemplate:yarn.lock",
+    use_global_yarn_cache = False,
+    frozen_lockfile = True,
 )
