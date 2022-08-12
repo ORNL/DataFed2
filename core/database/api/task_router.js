@@ -102,7 +102,7 @@ router.get('/run', function (req, res) {
             }catch( e ){
                 var err = Array.isArray(e)?e[1]:e;
                 if ( err.errorMessage )
-                    err = err.errorMessage;
+                    {err = err.errorMessage;}
 
                 console.log("Task run handler exception: " + err );
 
