@@ -44,7 +44,7 @@ router.post('/update', function (req, res) {
                 if ( !g_lib.hasAdminPermObject( client, object._id )){
                     is_admin = false;
                     if ( !g_lib.hasPermissions( client, object, g_lib.PERM_SHARE ))
-                        throw g_lib.ERR_PERM_DENIED;
+                        {throw g_lib.ERR_PERM_DENIED;}
                 }
 
                 var client_perm,cur_rules;
