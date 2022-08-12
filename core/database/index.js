@@ -5,7 +5,7 @@ require("@arangodb/aql/cache").properties({ mode: "demand" });
 const   createRouter = require('@arangodb/foxx/router');
 const   router = createRouter();
 
-router.use( "/acl", require('./api/acl_router') );
+router.use( "/acl", require("./api/acl_router") );
 router.use( "/admin", require('./api/admin_router') );
 router.use( "/authz", require('./api/authz_router') );
 router.use( "/col", require('./api/coll_router') );
