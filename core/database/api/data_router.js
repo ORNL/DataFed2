@@ -6,7 +6,7 @@ const   joi = require('joi');
 const   g_db = require('@arangodb').db;
 const   g_lib = require('./support');
 const   g_proc = require('./process');
-const   g_tasks = require('./tasks');
+const   g_tasks = require("./tasks");
 
 module.exports = router;
 
