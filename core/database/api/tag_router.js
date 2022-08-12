@@ -33,7 +33,7 @@ router.post('/search', function (req, res) {
     }
 })
 .queryParam('name', joi.string().required(), "Tag name or part of name to search for")
-.queryParam('offset', joi.number().optional(), "Offset")
+.queryParam("offset", joi.number().optional(), "Offset")
 .queryParam('count', joi.number().optional(), "Count")
 .summary('Search for tags')
 .description('Search for tags by name');
